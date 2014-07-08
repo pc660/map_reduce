@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<configuration>
+<port>8001</port>
+<factor>3</factor>
+<dataNodeMap>../obj/dataNodeMap.obj</dataNodeMap>
+<filemap>../obj/filemap.obj</filemap>
+<StorageMap>../obj/StorageMap.obj</StorageMap>
+</configuration>
+

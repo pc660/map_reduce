@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<configuration>
+<property>
+  <name>JobTracker.Port</name>
+  <value>8001</value>
+</property>
+
+<property>
+  <name>NameNode.Host</name>
+  <value>localhost</value>
+</property>
+
+<property>
+  <name>NameNode.Port</name>
+  <value>8000</value>
+</property>
+
+<property>
+  <name>TaskTrackerCheck.Interval</name>
+  <value>15000</value>
+  <type>millisecond</type>
+</property>
+
+</configuration>

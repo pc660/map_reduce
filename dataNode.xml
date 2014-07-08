@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<configuration>
+<DataNodeInfo>
+    <host>127.0.0.1<host>
+    <readport>7001</readport>
+    <download>7002</download>
+    <upload>7003</upload>
+    <name>7004</name>
+    <root>datanode1</root>
+</DataNodeInfo>
+<chunck_map>./obj/chunck_map.obj</chunck_map>
+</configuration>
+

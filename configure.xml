@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<configuration>
+<NameNode>
+    <hostname>127.0.0.1</hostname>
+    <port>8002</port>
+    <factor>3</factor>
+    <max_size>1000</max_size>
+</NameNode>
+</configuration>
+

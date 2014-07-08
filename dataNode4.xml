@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<configuration>
+<NameNode>
+    <hostname>127.0.0.1</hostname>
+    <port>8002</port>
+</NameNode>
+<DataNodeInfo>
+    <host>127.0.0.1</host>
+    <readport>6009</readport>
+    <download>6010</download>
+    <upload>6011</upload>
+    <name>6012</name>
+    <root>datanode4</root>
+    <max_size>20</max_size>
+    <checkpoint>obj/chunck_map4.obj</checkpoint>
+</DataNodeInfo>
+<chunck_map>obj/chunck_map4.obj</chunck_map>
+</configuration>
+

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<configuration>
+    <NameNodeInfo>
+        <port>8002</port>
+        <replica_factor>3</replica_factor>
+    </NameNodeInfo>
+<dataNodeMap>obj/dataNodeMap.obj</dataNodeMap>
+<filemap>obj/filemap.obj</filemap>
+<StorageMap>obj/StorageMap.obj</StorageMap>
+</configuration>
+

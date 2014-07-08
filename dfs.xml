@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<configuration>
+<NameNode>
+    <hostname>127.0.0.1</hostname>
+    <port>7002</port>
+</NameNode>
+</configuration>
+
