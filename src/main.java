@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Random;
 
+import mapreduce.Jobconfig;
 import NameNode.NameNode;
 import DataNode.DataNode;
 import File_system.DistributedFileSystem;
@@ -109,6 +110,12 @@ public class main {
 				bufferWriter.write('\n');
 			}
 			bufferWriter.close();
+		}
+		else if (args[0].equals("wordcount"))
+		{
+			Jobconfig config = new Jobconfig();
+			config.jobName = "wordcount";
+			
 		}
 		
 		
