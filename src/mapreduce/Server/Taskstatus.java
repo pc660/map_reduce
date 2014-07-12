@@ -9,6 +9,6 @@ public class Taskstatus implements Serializable{
 	public int taskId;
 	public Status state;
 	public String type;
-	
+	public String output;
 	public Jobconfig config;
 }
