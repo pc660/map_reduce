@@ -20,6 +20,8 @@ public class Jobconfig implements Serializable {
 	public Class mapClass;
 	public Class reduceClass;
 	
+	public String filename;
+	
 	public Class mapInputKeyClass;
 	public Class mapInputValueClass;
 	public Class mapOutputKeyClass;

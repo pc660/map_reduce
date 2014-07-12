@@ -9,6 +9,12 @@ import MessageForMap.JobMessage;
 public class JobClient {
 	public String hostname; 
 	public int jobtrackerport;
+	public JobClient ()
+	{
+		hostname = "127.0.0.1";
+		jobtrackerport = 10001;
+		
+	}
 	
 	public void runJob(Jobconfig config) throws IOException
 	{

@@ -1,7 +1,13 @@
 package mapreduce.Server;
 
-public class Tasktracker {
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
+public class Tasktracker {
+	
+	
 	
 	/*
 	 * manage task
@@ -21,7 +27,27 @@ public class Tasktracker {
 	 * */
 	private class sendBeat extends Thread
 	{
-		
+		Socket s;
+		public void sendBeat()
+		{
+			try {
+				s = new Socket ("127.0.0.1", 10002);
+				ObjectOutputStream output = new ObjectOutputStream (s.getOutputStream());
+				
+				
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		@Override
+		public void run()
+		{
+			
+		}
 	}
 	
 	

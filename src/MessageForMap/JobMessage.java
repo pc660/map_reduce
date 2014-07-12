@@ -1,5 +1,5 @@
 package MessageForMap;
 import mapreduce.*;
-public class JobMessage {
+public class JobMessage extends Message{
 	public Jobconfig config; 
 }
