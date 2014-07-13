@@ -34,6 +34,5 @@ public class JobClient {
 		output.writeObject(msg);
 		
 		
-		
 	}
 }

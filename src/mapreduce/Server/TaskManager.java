@@ -1,5 +1,6 @@
 package mapreduce.Server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskManager {
@@ -7,8 +8,9 @@ public class TaskManager {
 	public int reduce_num;
 	public int cpu_num;
 	public String root;
-	public int map_slot;
-	public int reduce_slot;
+	public HashMap<String, Taskstatus>  tasks;
+	public int map_slot; //maximum map slots
+	public int reduce_slot; //maximum reduce slots
 	public TaskManager(int cpu)
 	{
 		this.cpu_num = cpu;
@@ -19,7 +21,7 @@ public class TaskManager {
 		manager = new HashMap<Integer, Taskstatus> ();
 
 	}
-	public void add (Taskconfig config)
+	public synchronized void add (Taskconfig config)
 	{
 		Taskstatus task = new Taskstatus ();
 		task.jobId = config.jobID;
@@ -39,6 +41,28 @@ public class TaskManager {
 		manager.put(task.taskId, task);
 	}
 	
+	public synchronized ArrayList<Taskstatus> getAvailableTasks( )
+	{
+		//first check dead task
+		
+		
+		ArrayList<Taskstatus> list = new ArrayList<Taskstatus> ();
+		for (String str : tasks.keySet())
+		{
+			Taskstatus task = tasks.get(str);
+			
+		}
+		
+		
+	}
+	public int free_map_slots()
+	{
+		return map_slot - map_num;
+	}
+	public int free_reduce_slots()
+	{
+		return reduce_slot - reduce_num;
+	}
 	
 	HashMap<Integer, Taskstatus > manager;
 	

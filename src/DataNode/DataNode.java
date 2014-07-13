@@ -110,6 +110,8 @@ public class DataNode {
 			heart.start();
 			checkpoint_service check = new checkpoint_service();
 			check.start();
+			chunckservice chunck = new chunckservice (nodeinfo.download_port);
+			chunck.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -124,6 +126,50 @@ public class DataNode {
 			e.printStackTrace();
 		}
 	}
+	private class chunckservice extends Thread
+	{
+		public int port;
+		ServerSocket listening;
+		
+		public chunckservice (int port) throws IOException
+		{
+			this.port = port;
+			listening = new ServerSocket (this.port);
+		}
+		
+		@Override
+		public void run()
+		{
+			while(true)
+			{
+				Socket socket;
+				try {
+					socket = listening.accept();
+					ObjectInputStream input = new ObjectInputStream (socket.getInputStream());
+					Chunck f = (Chunck) input.readObject();
+					
+					
+					
+//					File file = new File ( nodeinfo.rootdirectory + "/" + f.chunckname  );
+					BufferedReader in = new BufferedReader(new FileReader(nodeinfo.rootdirectory + "/" + f.chunckname));
+					PrintWriter out = new PrintWriter(socket.getOutputStream());
+					String line = "";
+					while((line = in.readLine()) != null)
+					{
+						out.println(line);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}		
+		}
+	}
+	
 	//public
 	public void connectToNameaddress()
 	{
