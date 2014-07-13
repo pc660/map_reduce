@@ -231,6 +231,8 @@ public class DistributedFileSystem {
 		}
 		
 	}
+	
+	
 	public ArrayList<String> readFile (String filename, int start)
 	{
 		ArrayList<String> list  = communication.readfile(filename, start, -1);
