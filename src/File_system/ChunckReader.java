@@ -48,8 +48,7 @@ public class ChunckReader {
 	public String readline() throws IOException
 	{
 		return in.readLine();
-		
-		
+
 	}
 	
 }

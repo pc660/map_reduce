@@ -1,11 +1,13 @@
 package mapreduce.Server;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import MessageForMap.SlaveMessage;
+import MessageForMap.*;
+//import MessageForMap.SlaveMessage;
 
 public class Tasktracker {
 	TaskManager manger; 
@@ -45,6 +47,15 @@ public class Tasktracker {
 				e.printStackTrace();
 			}
 		}
+		
+		/*
+		 * schedule and run tasks
+		 * 
+		 * */
+		public void schedule ()
+		{
+			
+		}
 		@Override
 		public void run()
 		{
@@ -61,9 +72,24 @@ public class Tasktracker {
 				 * Receive Result Message from job tracker
 				 * 
 				 * */
+				ObjectInputStream input = new ObjectInputStream (s.getInputStream());
+				Message m = (Message) input.readObject();
+				
+				if ( m instanceof SlaveMessage)
+				{
+					TaskCreateMessage task = (TaskCreateMessage) m;
+					for (Taskconfig t : task.task)
+						{
+							manger.add( t);
+						}
+					schedule();
+				}
 				
 				
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
