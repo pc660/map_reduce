@@ -19,7 +19,7 @@ public class MapperOutputCollector<K, V> implements OutputCollector<K, V> {
 		this.filePrefix = filePrefix;
 		printers = new PrintWriter[numOfReducer];
 		for (int i = 0; i < printers.length; i++) {
-			String pathname = filePrefix + i;
+			String pathname = filePrefix + "_" + i;
 			try {
 				printers[i] = new PrintWriter(new File(pathname));
 			} catch (FileNotFoundException e) {
