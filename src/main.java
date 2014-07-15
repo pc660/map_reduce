@@ -1,4 +1,7 @@
 import java.io.BufferedReader;
+
+import example.*;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -7,7 +10,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Random;
 
+import mapreduce.JobClient;
 import mapreduce.Jobconfig;
+import mapreduce.Server.Jobtracker;
+import mapreduce.Server.Tasktracker;
 import NameNode.NameNode;
 import DataNode.DataNode;
 import File_system.DistributedFileSystem;
@@ -111,7 +117,13 @@ public class main {
 			}
 			bufferWriter.close();
 		}
-		else if (args[0].equals("wordcount"))
+		else if (args[0].equals("jobtracker"))
+		{
+			Jobtracker tracker = new Jobtracker();
+			
+			
+		}
+		else if (args[0].equals("example.wordcount"))
 		{
 			Jobconfig config = new Jobconfig();
 			config.jobName = "wordcount";
@@ -121,6 +133,23 @@ public class main {
 			config.mapInputValueClass = String.class;
 			config.mapOutputKeyClass = String.class;
 			config.mapOutputValueClass = String.class;
+			
+			config.mapClass = wordcount.Map.class;
+			config.reduceClass = wordcount.reduce.class;
+			config.reduceInputKeyClass = String.class;
+			config.reduceInputValueClass = String.class;
+			config.reduceOutputKeyClass = String.class;
+			config.reduceOutputValueClass = String.class;
+			//config.mapInputPath = "1";
+			//config.setJar("bin/example/wordcount.class");
+			config.filename = "1";
+			JobClient client = new JobClient();
+			client.runJob(config);
+
+		}
+		else if (args[0].equals("tasktracker"))
+		{
+			Tasktracker task = new Tasktracker();
 			
 			
 			

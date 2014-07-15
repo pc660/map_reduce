@@ -30,7 +30,10 @@ public abstract class Mapper<INKEY, INVALUE, OUTKEY, OUTVALUE> implements Serial
 			OutputCollector<OUTKEY, OUTVALUE> out) throws Exception {
 		throw new Exception("Need to implement map by users");
 	}
-	
+	public void test ()
+	{
+		System.out.println("1");
+	}
 	
 	
 }

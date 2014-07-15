@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import ding.Mapper;
 import MessageForMap.*;
 //import MessageForMap.SlaveMessage;
 
@@ -64,6 +65,7 @@ public class Tasktracker {
 		public synchronized void schedule ()
 		{
 			ArrayList<Taskstatus> list = manger.getAvailableTasks();
+			System.out.println("list size " + list.size());
 			for (Taskstatus t : list)
 			{
 				if (t.type.equals("map"))
@@ -72,7 +74,20 @@ public class Tasktracker {
 					manger.map_num ++ ;
 					manger.map_slot--;
 					t.state = Status.Running;
+					
 					//run task
+					Class tmp =  t.config.config.mapClass ;
+					try {
+						
+						
+					} catch (InstantiationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 				}
 				else if (t.type.equals("reduce"))
 				{
@@ -97,10 +112,15 @@ public class Tasktracker {
 			try {
 				ObjectOutputStream output = new ObjectOutputStream (s.getOutputStream());
 				SlaveMessage msg = new SlaveMessage();
+				msg.hostname = server.getLocalSocketAddress().toString();
+				if (msg.hostname.contains("0.0.0.0"))
+					msg.hostname = "127.0.0.1";
+				msg.port = taskport;
 				msg.map_slot = manger.free_map_slots();
 				msg.reduce_slot = manger.free_reduce_slots();
 				msg.CPU = manger.cpu_num;
 				msg.tasks = manger.tasks;
+				msg.available_cpu = manger.cpu_num - manger.map_num - manger.reduce_num;
 				output.writeObject(msg);
 				
 				/*
@@ -112,7 +132,9 @@ public class Tasktracker {
 				
 				if ( m instanceof TaskCreateMessage)
 				{
+					System.out.println("receive task create message");
 					TaskCreateMessage task = (TaskCreateMessage) m;
+					//System.out.println(task.task.size());
 					for (Taskconfig t : task.task)
 						{
 							manger.add( t);

@@ -13,7 +13,7 @@ public class TaskManager {
 	public String hostname;
 	public int port;
 	public int slave_id;
-	
+	public HashMap<Integer, Taskstatus > manager;
 	public HashMap<String, Taskstatus>  tasks;
 	public int map_slot; //maximum map slots
 	public int reduce_slot; //maximum reduce slots
@@ -24,17 +24,18 @@ public class TaskManager {
 		this.reduce_slot = cpu;
 		this.map_num = 0;
 		this.reduce_num = 0;
-		manager = new HashMap<Integer, Taskstatus> ();
-		
+		this.manager = new HashMap<Integer, Taskstatus> ();
+		this.tasks = new  HashMap<String, Taskstatus>();
 	}
 	public synchronized void add (Taskconfig config)
 	{
 		Taskstatus task = new Taskstatus ();
 		task.jobId = config.jobID;
 		task.taskId = config.TaskID;
-		task.state = Status.Running;
+		task.state = Status.Runnable;
 		task.type = config.jobtype;
-		
+		task.assign = false;
+		task.config = config;
 		if (task.type == "map")
 		{
 			this.map_num++;
@@ -44,6 +45,7 @@ public class TaskManager {
 		{
 			this.reduce_num ++;
 		}
+		
 		manager.put(task.taskId, task);
 	}
 	
@@ -53,10 +55,11 @@ public class TaskManager {
 		
 		int slot = map_slot + reduce_slot;
 		ArrayList<Taskstatus> list = new ArrayList<Taskstatus> ();
-		for (String str : tasks.keySet())
+		for (Integer str : manager.keySet())
 		{
-			Taskstatus task = tasks.get(str);
-			if ( slot > 0 && task.assign == false && task.state != Status.Succeed )
+			System.out.println("task id " + str);
+			Taskstatus task = manager.get(str);
+			if ( slot > 0 && task.assign == false && task.state == Status.Runnable)
 			{
 				list.add(task);
 				slot -- ;
@@ -78,6 +81,6 @@ public class TaskManager {
 		return reduce_slot - reduce_num;
 	}
 	
-	HashMap<Integer, Taskstatus > manager;
+	
 	
 }

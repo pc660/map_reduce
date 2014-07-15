@@ -27,6 +27,6 @@ public class Jobstatus implements Serializable {
 	public HashMap<String, Status> reducestate;
 	public Jobconfig jobConfig;
 	
-	
+	public HashMap<String, Class> jobio;
 	
 }

@@ -32,10 +32,12 @@ public class Jobtracker {
 	 * */
 	public Jobtracker ()
 	{
+		jobmanager = new Jobmanager();
+		taskmanger = new HashMap<Integer, TaskManager>();
 		jobreceiver recever = new jobreceiver (receiver_port);
 		recever.start();
-	//	ResouceManager manager = new ResouceManager(resource_port);
-	//	manager.start();
+		ResouceManager manager = new ResouceManager(resource_port);
+		manager.start();
 	}
 	public void listAllJobs()
 	{
@@ -79,6 +81,7 @@ public class Jobtracker {
 					if (msg instanceof JobMessage)
 					{
 						JobMessage m = (JobMessage) msg;
+						//System.out.println(m.config.filename);
 						jobmanager.add(  m.config);
 					}
 					
@@ -113,9 +116,11 @@ public class Jobtracker {
 			
 			//check available slots
 			ArrayList<Taskconfig > list = new ArrayList<Taskconfig> ();
+			System.out.println("cpu " + msg.available_cpu );
 			for (int i = 0; i< msg.available_cpu; i++)
 			{
 				Jobstatus job = jobmanager.getFirstAvailableJob();
+				
 				if (job == null)
 				{
 					System.out.println("No Available jobs now");
@@ -137,12 +142,14 @@ public class Jobtracker {
 					list.add(task);
 				
 			}
+			System.out.println("list size " + list.size());
 			return list;
 			
 			
 		}
 		public void register (SlaveMessage msg)
 		{
+			System.out.println("register");
 			TaskManager task = new TaskManager(msg.CPU);
 		//	task.cpu_num = msg.CPU;
 			task.hostname = msg.hostname;
@@ -169,7 +176,7 @@ public class Jobtracker {
 			
 			
 		}
-		public synchronized void handleMessage(SlaveMessage msg)
+		public synchronized Message handleMessage(SlaveMessage msg)
 		{
 			ArrayList<Taskconfig>  list = null;
 			if (taskmanger.containsKey(msg.slaveID) )
@@ -179,24 +186,13 @@ public class Jobtracker {
 			else
 			{
 				register(msg);
-				 list = schedule(msg);
+				list = schedule(msg);
 			}
 			//send message back to slave
 			TaskCreateMessage m = new TaskCreateMessage ();
+			//System.out.println(list.size());
 			m.task = list;
-			try {
-				Socket s = new Socket ( msg.hostname, msg.port  );
-				ObjectOutputStream output = new ObjectOutputStream (s.getOutputStream());
-				output.writeObject(m);
-				
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+			return m;
 			
 			
 		}
@@ -215,7 +211,9 @@ public class Jobtracker {
 						 * check slave info and assign tasks
 						 * 
 						 * */
-						handleMessage ((SlaveMessage)msg);
+						Message m = handleMessage ((SlaveMessage)msg);
+						ObjectOutputStream output = new ObjectOutputStream (socket.getOutputStream());
+						output.writeObject(m);
 						
 					}
 					
