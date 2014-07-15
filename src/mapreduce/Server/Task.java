@@ -2,8 +2,7 @@ package mapreduce.Server;
 
 import java.io.IOException;
 
-import ding.Mapper;
-import ding.MapperOutputCollector;
+import ding.*;
 import File_system.ChunckReader;
 
 
@@ -44,6 +43,8 @@ public class Task {
 	}
 	
 	private void runReduceTask() {
+		
+		
 		do_reducer().start();
 	}
 	
@@ -52,7 +53,8 @@ public class Task {
 		return new Thread ( 
 				new Runnable ()
 				{	
-					ChunckReader chunckReader = new ChunckReader(taskConfig.getChunck());
+					MapRecordReader rr = new MapRecordReader(taskConfig.getChunck());
+					
 					public void run()
 					{	
 						Mapper mapper =  taskConfig.getMapper();
@@ -61,8 +63,8 @@ public class Task {
 						MapperOutputCollector out = new MapperOutputCollector(filename, taskConfig.getNumOfRed());
 						String nextLine = null;
 						try {
-							while ((nextLine = chunckReader.readline()) != null) {
-								mapper.map(key, nextLine, out);
+							while (rr.nextKeyVlaue()) {
+								mapper.map(rr.getCurrentKey(), rr.getCurrentValue(), out);
 							}
 							
 						} catch (IOException e) {
