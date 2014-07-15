@@ -116,6 +116,14 @@ public class main {
 			Jobconfig config = new Jobconfig();
 			config.jobName = "wordcount";
 			
+			
+			config.mapInputKeyClass = String.class;
+			config.mapInputValueClass = String.class;
+			config.mapOutputKeyClass = String.class;
+			config.mapOutputValueClass = String.class;
+			
+			
+			
 		}
 		
 		

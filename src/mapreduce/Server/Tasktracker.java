@@ -3,15 +3,26 @@ package mapreduce.Server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import MessageForMap.*;
 //import MessageForMap.SlaveMessage;
 
 public class Tasktracker {
 	TaskManager manger; 
+	public int taskport  = 20001;
 	
+	public Tasktracker ()
+	{
+		manger = new TaskManager(4);
+		sendBeat sendbeat = new sendBeat();
+		check check = new check();
+		check.start();
+		sendbeat.start();
+	}
 	
 	/*
 	 * manage task
@@ -32,28 +43,52 @@ public class Tasktracker {
 	private class sendBeat extends Thread
 	{
 		Socket s;
-		public void sendBeat()
+		ServerSocket server;
+		public sendBeat()
 		{
 			try {
+				server = new ServerSocket (taskport);
 				s = new Socket ("127.0.0.1", 10002);
-				
-				
-				
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	
 		
 		/*
 		 * schedule and run tasks
 		 * 
 		 * */
-		public void schedule ()
+		
+		public synchronized void schedule ()
 		{
+			ArrayList<Taskstatus> list = manger.getAvailableTasks();
+			for (Taskstatus t : list)
+			{
+				if (t.type.equals("map"))
+				{
+					System.out.println("receive one map");
+					manger.map_num ++ ;
+					manger.map_slot--;
+					t.state = Status.Running;
+					//run task
+				}
+				else if (t.type.equals("reduce"))
+				{
+					System.out.println("receive one reduce");
+					manger.reduce_num ++;
+					manger.reduce_slot--;
+					t.state = Status.Running;
+					
+					//run task
+				}
+				else
+				{
+					
+					System.out.println("wierd");
+				}
+			}
 			
 		}
 		@Override
@@ -75,7 +110,7 @@ public class Tasktracker {
 				ObjectInputStream input = new ObjectInputStream (s.getInputStream());
 				Message m = (Message) input.readObject();
 				
-				if ( m instanceof SlaveMessage)
+				if ( m instanceof TaskCreateMessage)
 				{
 					TaskCreateMessage task = (TaskCreateMessage) m;
 					for (Taskconfig t : task.task)

@@ -30,7 +30,7 @@ public class Jobmanager {
 		return jobQueue.size();
 		//return jobQueue.size();
 	}
-	
+	//public void getAvailableTasks
 	public synchronized void add (Jobconfig config)
 	{
 		String name = config.jobName;
@@ -75,13 +75,110 @@ public class Jobmanager {
 	
 		
 	}
-	public Jobconfig assign_map ()
+	public synchronized Jobstatus getFirstAvailableJob()
 	{
-		 return null;
+		Jobstatus job = null;
+		for (Integer i :jobQueue.keySet())
+		{
+			job = jobQueue.get(i);
+			if (job.status == Status.Runnable )
+				return job;
+			else if (job.status == Status.Running &&  (job.unassigned_map >0|| job.unassigned_reduce>0) )
+				return job;
+		}
+		
+		return job;
+	}
+	public Taskconfig assign_map (String hostname, Jobstatus job)
+	{
+		//return a map with the corresponding hostname
+		//if not exist, return the first one
+		Taskconfig task = null;
+		boolean judge = false;
+		if (job.unassigned_map == 0 )
+			return null;
+		else
+		{
+			for (String str : job.mapstate.keySet())
+			{
+				if (job.mapstate.get(str) == Status.Runnable   )
+				{
+					ArrayList<Chunck> list = job.mapinput.get(str);
+					for (Chunck tmp : list)
+					{
+						if(hostname == tmp.nodeInfo.hostname)
+						{
+							System.out.println("Find one task with same hostname");
+							task = new Taskconfig();
+							task.jobtype = "map";
+							task.jar = job.jobConfig.jar;
+							
+							String [] args = str.split("_");
+							
+							task.TaskID = Integer.parseInt(args[1].substring(3));
+							task.jobID = Integer.parseInt(args[0].substring(3));
+							task.inputfile.add(tmp.chunckname);
+							
+							job.unassigned_map --;
+							
+							return task;
+						}
+						else
+						{
+							if (!judge){
+								System.out.println("Find one task with different hostname");
+								judge = true;
+								task = new Taskconfig();
+								task.jobtype = "map";
+								task.jar = job.jobConfig.jar;
+								
+								String [] args = str.split("_");
+								
+								task.TaskID = Integer.parseInt(args[1].substring(3));
+								task.jobID = Integer.parseInt(args[0].substring(3));
+								task.inputfile.add(tmp.chunckname);
+							}
+						}
+					}
+				}
+			}
+		}
+		if(task != null)
+			job.unassigned_map --;
+		return task;
 	}
 	
-	public Jobconfig assign_reduce()
+	public Taskconfig assign_reduce(Jobstatus job)
 	{
-		return null;
+		Taskconfig task = null;
+		if (job.unassigned_reduce == 0 )
+			return null;
+	//	boolean judge = false;
+		if (job.status == Status.Runnable && job.map_finished == true)
+		{
+			for (String str : job.reducestate.keySet())
+			{
+				if (job.reducestate.get(str) == Status.Runnable   )
+				{
+					//ArrayList<Chunck> list = job.reducestate.get(str);
+					//HashMap<String, String> input = job.reduceinput;
+					System.out.println("Assign one reduce");
+					task = new Taskconfig();
+					task.jobtype = "reduce";
+					task.jar = job.jobConfig.jar;
+					
+					String [] args = str.split("_");
+					
+					task.TaskID = Integer.parseInt(args[1].substring(6));
+					task.jobID = Integer.parseInt(args[0].substring(3));
+					task.inputfile = job.reduceinput;
+					job.unassigned_reduce --;
+					return task;
+					
+					
+				}
+			}
+		}
+		return task;
 	}
 }

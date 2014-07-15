@@ -10,5 +10,9 @@ public class Taskstatus implements Serializable{
 	public Status state;
 	public String type;
 	public String output;
-	public Jobconfig config;
+	public Taskconfig config;
+	
+	
+	//newly add stuff
+	public boolean assign = false;
 }

@@ -9,7 +9,7 @@ public class Taskconfig {
 	public int TaskID;
 	public String jobtype;
 	public ArrayList<Byte> jar;
-	public HashMap<String, String> Inputfile;
-
+	//public HashMap<String, String> Inputfile;
+	ArrayList<String> inputfile;
 	
 }

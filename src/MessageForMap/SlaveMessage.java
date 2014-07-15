@@ -9,6 +9,8 @@ public class SlaveMessage extends Message{
 	public int CPU;
 	public int available_cpu;
 	public HashMap<String, Taskstatus> tasks;
-	
+	public String hostname; 
+	public int port;
+	public String root;
 
 }
