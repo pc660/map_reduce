@@ -27,7 +27,7 @@ public class JobClient {
 		 * */
 		JobMessage msg = new JobMessage();
 		msg.config = config;
-		
+		System.out.println(config.filename);
 		Socket s = new Socket (hostname, jobtrackerport);
 		
 		ObjectOutputStream output = new ObjectOutputStream (s.getOutputStream());

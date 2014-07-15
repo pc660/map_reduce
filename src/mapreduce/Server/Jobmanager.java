@@ -38,8 +38,8 @@ public class Jobmanager {
 		
 		int id = genereateID();
 		status.job_id = id;
-		
-		status.status = Status.Running;
+		status.jobio = new HashMap<String, Class>();
+		status.status = Status.Runnable;
 		
 		//get DFS
 		status.jobConfig = config;
@@ -52,15 +52,16 @@ public class Jobmanager {
 		DistributedFileSystem dfs = new DistributedFileSystem();
 		DFSfile file = dfs.getFile(config.filename);
 		status.map_num = file.chuncklist.size();
-	
+		System.out.println("map num " + status.map_num);
+		status.unassigned_map = status.map_num;
 		//hard code
 		status.reduce_num = 1;
-		
+		status.unassigned_reduce = status.reduce_num;
 		//initilize map
 		for (int i = 0; i< status.map_num ; i++)
 		{
 			String taskID = "job" + id + "_map" + i;
-			status.mapstate.put(taskID, Status.Suspend);
+			status.mapstate.put(taskID, Status.Runnable);
 			status.mapinput.put(taskID, file.chuncklist.get(i));
 			
 		}
@@ -68,7 +69,7 @@ public class Jobmanager {
 		for (int i = 0; i< status.reduce_num;i++)
 		{
 			String taskID = "job" + id + "_reduce" + i;
-			status.reducestate.put(taskID, Status.Suspend);
+			status.reducestate.put(taskID, Status.Runnable);
 			
 		}
 		jobQueue.put(id, status);
@@ -101,18 +102,21 @@ public class Jobmanager {
 		{
 			for (String str : job.mapstate.keySet())
 			{
+				//System.out.println("123");
 				if (job.mapstate.get(str) == Status.Runnable   )
 				{
+				//	System.out.println("123");
 					ArrayList<Chunck> list = job.mapinput.get(str);
 					for (Chunck tmp : list)
 					{
-						if(hostname == tmp.nodeInfo.hostname)
+						//System.out.println("1234");
+						if(hostname.equals( tmp.nodeInfo.hostname) )
 						{
 							System.out.println("Find one task with same hostname");
 							task = new Taskconfig();
 							task.jobtype = "map";
 							task.jar = job.jobConfig.jar;
-							
+							task.config = job.jobConfig;
 							String [] args = str.split("_");
 							
 							task.TaskID = Integer.parseInt(args[1].substring(3));
@@ -131,7 +135,7 @@ public class Jobmanager {
 								task = new Taskconfig();
 								task.jobtype = "map";
 								task.jar = job.jobConfig.jar;
-								
+								task.config = job.jobConfig;
 								String [] args = str.split("_");
 								
 								task.TaskID = Integer.parseInt(args[1].substring(3));
