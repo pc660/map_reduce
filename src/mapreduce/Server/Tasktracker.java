@@ -76,17 +76,12 @@ public class Tasktracker {
 					t.state = Status.Running;
 					
 					//run task
-					Class tmp =  t.config.config.mapClass ;
-					try {
-						
-						
-					} catch (InstantiationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					//t.config.localize();
+					Mapper map = (Mapper) t.config.getMapper();
+					map.test();
+					
+					
+					
 					
 				}
 				else if (t.type.equals("reduce"))

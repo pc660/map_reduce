@@ -133,9 +133,10 @@ public class main {
 			config.mapInputValueClass = String.class;
 			config.mapOutputKeyClass = String.class;
 			config.mapOutputValueClass = String.class;
-			
-			config.mapClass = wordcount.Map.class;
-			config.reduceClass = wordcount.reduce.class;
+			//wordcount t= new wordcount();
+			//config.jobClass = wordcount.class;
+			//config.mapClass = wordcount.Map.class;
+			//config.reduceClass = wordcount.reduce.class;
 			config.reduceInputKeyClass = String.class;
 			config.reduceInputValueClass = String.class;
 			config.reduceOutputKeyClass = String.class;
@@ -143,8 +144,14 @@ public class main {
 			//config.mapInputPath = "1";
 			//config.setJar("bin/example/wordcount.class");
 			config.filename = "1";
+			config.setJar("bin/example/wordcount.class");
+			config.classname = "example.wordcount";
+			//String s= "bin/example/wordcount.class";
+			
+			//System.out.println(s.substring(0, s.length() - 6));
 			JobClient client = new JobClient();
 			client.runJob(config);
+			
 
 		}
 		else if (args[0].equals("tasktracker"))

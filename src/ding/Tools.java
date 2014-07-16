@@ -2,8 +2,10 @@ package ding;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,7 +15,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import utilities.FileTool.KeyValuePair;
 import file.Chunck;
 import file.DFSfile;
 import File_system.ChunckReader;
@@ -21,14 +22,20 @@ import File_system.DistributedFileSystem;
 import MessageForMap.Message;
 
 public class Tools {
-	public  boolean downloadFileToLocal(String mapperHost, int mapperPort, String remoteFilename,
+	/*
+	public  static boolean downloadFileToLocal(String mapperHost, int mapperPort, String remoteFilename,
 			String localFilename, String localDir) {
 		String localFilePath = localDir + localFilename;
 
 		File newFile = null;
 		FileOutputStream writeStream = null;
 		newFile = new File(localFilePath);
-		writeStream = new FileOutputStream(newFile);
+		try {
+			writeStream = new FileOutputStream(newFile);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		DataTransferMessage outcomingMessage = new DataTransferMessage(remoteFilename, null);
 
@@ -39,17 +46,18 @@ public class Tools {
 		}
 		if (incomingMessage.getPayload() != null) {
 			byte[] payload = (byte[]) incomingMessage.getPayload();
-			writeStream.write(payload);
+			try {
+				writeStream.write(payload);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		closeFileStream(writeStream);
 		return true;
 	}
-
-	public boolean downloadAllFileToLocal() {
-
-	}
-
-	public String downloadDFSToLocal(String fileName) {
+*/
+	public static String downloadDFSToLocal(String fileName) {
 		DistributedFileSystem dfs = new DistributedFileSystem();
 		DFSfile dfsFile =  dfs.getFile(fileName);
 		ArrayList<ArrayList<Chunck>> lists= dfsFile.chuncklist;
@@ -60,36 +68,60 @@ public class Tools {
 
 		// if file doesnt exists, then create it
 		if (!file.exists()) {
-			file.createNewFile();
-		}
-
-		FileWriter fw = new FileWriter(file.getAbsoluteFile());
-		BufferedWriter bw = new BufferedWriter(fw);
-		for (ArrayList<Chunck> list : lists) {
-			ChunckReader chunckReader = new ChunckReader(list.get(0));
-			String line = null;
-			while ((line = chunckReader.readline()) != null) {
-				bw.write(line);
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		bw.close();
-		return file.getCanonicalPath();
+		String retrunPath = null;
+		FileWriter fw;
+		BufferedWriter bw;
+		try {
+			fw = new FileWriter(file.getAbsoluteFile());
+			bw = new BufferedWriter(fw);
+			for (ArrayList<Chunck> list : lists) {
+				ChunckReader chunckReader = new ChunckReader(list.get(0));
+				String line = null;
+				while ((line = chunckReader.readline()) != null) {
+					bw.write(line);
+				}
+			}
+			bw.close();
+			retrunPath = file.getCanonicalPath();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return retrunPath;
 	}
 
-	public String mergeSortedFiles(String pathname1, String pathname2, String mergedFileName) {
+	public static String mergeSortedFiles(String pathname1, String pathname2, String mergedFileName) {
 		File file1 = null;
 		File file2 = null;
 		File mergedFile = null;
 		Scanner scanner1 = null;
 		Scanner scanner2 = null;
-//		String tmpFileName = mergedFileName;
+		//		String tmpFileName = mergedFileName;
 
 		file1 = new File(pathname1);
 		file2 = new File(pathname2);
-		scanner1 = new Scanner(file1);
-		scanner2 = new Scanner(file2);
+		try {
+			scanner1 = new Scanner(file1);
+			scanner2 = new Scanner(file2);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		mergedFile = new File(mergedFileName);
-		PrintWriter mergedFilePrinter = new PrintWriter(mergedFile);
+		PrintWriter mergedFilePrinter = null;
+		try {
+			mergedFilePrinter = new PrintWriter(mergedFile);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		KVPair kvpair1 = null;
 		KVPair kvpair2 = null;
@@ -126,47 +158,59 @@ public class Tools {
 				}
 			}
 		}
-		
 
-		
+
+
 		while (line1 != null) {
 			kvpair1 = new KVPair(line1);
 			mergedFilePrinter.println(kvpair1.toString());
 			line1 = scanner1.nextLine();
 		}
-		
+
 		while (line2 != null) {
 			kvpair2 = new KVPair(line2);
 			mergedFilePrinter.println(kvpair2.toString());
 			line2 = scanner2.nextLine();
 		}
-		
+
 		file1.delete();
 		file2.delete();
 		scanner1.close();
 		scanner2.close();
 		mergedFilePrinter.close();
-		return mergedFile.getCanonicalPath();
+		String returnPath = null;
+		try {
+			returnPath = mergedFile.getCanonicalPath();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
+		return returnPath;
+
 	}
 
-	public void closeFileStream(FileOutputStream fileStream) {
+	public static void closeFileStream(FileOutputStream fileStream) {
 		if (fileStream != null) {
-			fileStream.close();
+			try {
+				fileStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
-
-	public  Socket createSocket(String host, int port) {
+	/*
+	public static Socket createSocket(String host, int port) {
 		Socket socket = null;
 
 		socket = new Socket(host,port);
-
-
 		return socket;
 
 	}
 
-	public boolean sendMessage(Socket socket, Message message) {
+
+	public static boolean sendMessage(Socket socket, Message message) {
 
 		ObjectOutputStream oos = null;
 		oos = new ObjectOutputStream(socket.getOutputStream());
@@ -175,12 +219,12 @@ public class Tools {
 		return true;
 	}
 
-	public Message receiveMessage(Socket socket) {
+	public static Message receiveMessage(Socket socket) {
 		ObjectInputStream ois = null;
 		ois = new ObjectInputStream(socket.getInputStream());
 		Message incomingMessage = (Message) ois.readObject();
 		return incomingMessage;
 	}
-
+	 */
 
 }

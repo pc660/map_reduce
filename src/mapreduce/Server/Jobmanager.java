@@ -119,7 +119,7 @@ public class Jobmanager {
 							task.config = job.jobConfig;
 							String [] args = str.split("_");
 							
-							task.TaskID = Integer.parseInt(args[1].substring(3));
+							task.taskID = Integer.parseInt(args[1].substring(3));
 							task.jobID = Integer.parseInt(args[0].substring(3));
 							task.inputfile.add(tmp.chunckname);
 							
@@ -138,7 +138,7 @@ public class Jobmanager {
 								task.config = job.jobConfig;
 								String [] args = str.split("_");
 								
-								task.TaskID = Integer.parseInt(args[1].substring(3));
+								task.taskID = Integer.parseInt(args[1].substring(3));
 								task.jobID = Integer.parseInt(args[0].substring(3));
 								task.inputfile.add(tmp.chunckname);
 							}
@@ -173,7 +173,7 @@ public class Jobmanager {
 					
 					String [] args = str.split("_");
 					
-					task.TaskID = Integer.parseInt(args[1].substring(6));
+					task.taskID = Integer.parseInt(args[1].substring(6));
 					task.jobID = Integer.parseInt(args[0].substring(3));
 					task.inputfile = job.reduceinput;
 					job.unassigned_reduce --;

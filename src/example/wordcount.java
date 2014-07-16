@@ -1,22 +1,26 @@
 package example;
 import ding.*;
 public class wordcount {
+	
 
-	 public static class Map extends Mapper
-	 {
-		 public void map()
+		 public static class map extends Mapper
 		 {
-			 System.out.println("test for map");
+			 public void map()
+			 {
+				 System.out.println("test for map");
+			 }
 		 }
-	 }
-	 public static class reduce extends Reducer
-	 {
-		 public void reduce()
+		 public static class reduce extends Reducer
 		 {
-			 System.out.println("test for reduce");
+			 public void reduce()
+			 {
+				 System.out.println("test for reduce");
+			 }
 		 }
-	 }
-	 
-	 
 		 
+		 
+			 
+	
+	
+
 }

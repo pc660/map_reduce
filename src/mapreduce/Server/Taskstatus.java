@@ -11,7 +11,7 @@ public class Taskstatus implements Serializable{
 	public String type;
 	public String output;
 	public Taskconfig config;
-	
+	//public 
 	
 	//newly add stuff
 	public boolean assign = false;

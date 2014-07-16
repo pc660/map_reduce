@@ -32,7 +32,7 @@ public abstract class Mapper<INKEY, INVALUE, OUTKEY, OUTVALUE> implements Serial
 	}
 	public void test ()
 	{
-		System.out.println("1");
+		System.out.println("test success");
 	}
 	
 	

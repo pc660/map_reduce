@@ -75,7 +75,7 @@ public class NameNode {
 			
 			nList = doc.getElementsByTagName("dataNodeMap");
 			String nodemap_name =  nList.item(0).getTextContent();
-			
+//			System.out.println("123");
 			File file = new File (nodemap_name);
 			if (file.exists()){
 				FileInputStream in = new FileInputStream(nodemap_name);
@@ -102,17 +102,20 @@ public class NameNode {
 			}
 			nList = doc.getElementsByTagName("StorageMap");
 			String stroage_map_name =  nList.item(0).getTextContent();
-			
+//			System.out.println("123");
 			file = new File(stroage_map_name);
 			if (file.exists()){
 				FileInputStream in = new FileInputStream(stroage_map_name);
+				//System.out.println("123");
 				ObjectInputStream input= new ObjectInputStream ( in );
 				StorageMap = ( HashMap<DataNodeInfo, Integer> )input.readObject();
 			}
 			else
 			{
+				//System.out.println("123");
 				StorageMap = new HashMap<DataNodeInfo, Integer>();
 			}
+//			System.out.println("123");
 			//start service now
 			System.out.println("Finish  NameNode");
 			start_service();

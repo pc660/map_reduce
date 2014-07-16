@@ -31,7 +31,7 @@ public class TaskManager {
 	{
 		Taskstatus task = new Taskstatus ();
 		task.jobId = config.jobID;
-		task.taskId = config.TaskID;
+		task.taskId = config.taskID;
 		task.state = Status.Runnable;
 		task.type = config.jobtype;
 		task.assign = false;
