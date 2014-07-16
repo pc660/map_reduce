@@ -1,6 +1,7 @@
 package mapreduce.Server;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import mapreduce.Jobconfig;
 
@@ -11,7 +12,7 @@ public class Taskstatus implements Serializable{
 	public String type;
 	public String output;
 	public Taskconfig config;
-	//public 
+	public ArrayList<String> log;
 	
 	//newly add stuff
 	public boolean assign = false;

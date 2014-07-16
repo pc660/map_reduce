@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import file.Chunck;
 import File_system.DistributedFileSystem;
 
 /**
@@ -37,10 +38,38 @@ public class MapperOutputCollector<K, V> implements OutputCollector<K, V> {
 		pathnames = new ArrayList<String>();
 		for (int i = 0; i < printers.length; i++) {
 			String pathname = filePrefix + "_" + i;
+			
 			try {
 				File file = new File(pathname);
+				System.out.println(pathname);
 				printers[i] = new PrintWriter(file);
 				pathnames.add(file.getPath());
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Cannot create the file output stream");
+			}
+		}
+		tmps = new ArrayList<ArrayList<KVPair>>();
+		for (int i = 0; i < printers.length; i++) {
+			tmps.add(new ArrayList<KVPair>());	
+		}
+	}
+	public MapperOutputCollector (Chunck c, int numOfReducer) {
+		this.numOfReducer = numOfReducer;
+		this.filePrefix = c.chunckname;
+		
+		printers = new PrintWriter[numOfReducer];
+		pathnames = new ArrayList<String>();
+		for (int i = 0; i < printers.length; i++) {
+			String pathname = filePrefix + "_" + i;
+			try {
+				System.out.println("printer" + i);
+				File file = new File("data/" + pathname);
+				System.out.println(pathname);
+				printers[i] = new PrintWriter(file);
+				pathnames.add( pathname);
+//				System.out.println(file.getPath());
+				
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				System.out.println("Cannot create the file output stream");

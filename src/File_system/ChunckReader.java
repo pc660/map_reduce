@@ -25,6 +25,24 @@ public class ChunckReader {
 	BufferedReader in;
 	PrintWriter out;
 	boolean local ;
+	public ChunckReader (String filename) throws FileNotFoundException
+	{
+		File file = new File(chunck.nodeInfo.rootdirectory + "/" + chunck.chunckname);
+		if(file.exists())
+		{
+				in = new BufferedReader (  new FileReader (  chunck.nodeInfo.rootdirectory + "/" + chunck.chunckname ) );
+				local = true;
+		}
+		else
+		{
+			//try to get file from server
+			//String [] args = filename.split("_");
+		
+			
+			
+			
+		}
+	}
 	public ChunckReader(Chunck chunck) throws UnknownHostException, IOException
 	{
 		this.chunck = chunck;

@@ -1,16 +1,20 @@
 package example;
+import java.io.IOException;
+
 import ding.*;
 public class wordcount {
 	
 
-		 public static class map extends Mapper
+		 public static class Map extends Mapper<String, String, String, String>
 		 {
-			 public void map()
+			 @Override	 
+			 public void map (String key, String value, OutputCollector<String, String> output) throws IOException
 			 {
-				 System.out.println("test for map");
+				// System.out.println(key);
+				 output.collect(key, value);
 			 }
 		 }
-		 public static class reduce extends Reducer
+		 public static class Reduce extends Reducer
 		 {
 			 public void reduce()
 			 {

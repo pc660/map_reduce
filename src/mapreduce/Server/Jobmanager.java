@@ -121,8 +121,8 @@ public class Jobmanager {
 							
 							task.taskID = Integer.parseInt(args[1].substring(3));
 							task.jobID = Integer.parseInt(args[0].substring(3));
-							task.inputfile.add(tmp.chunckname);
-							
+							task.mapinput = tmp;
+							task.numOfRed = job.reduce_num;
 							job.unassigned_map --;
 							
 							return task;
@@ -137,7 +137,7 @@ public class Jobmanager {
 								task.jar = job.jobConfig.jar;
 								task.config = job.jobConfig;
 								String [] args = str.split("_");
-								
+								task.numOfRed = job.reduce_num;
 								task.taskID = Integer.parseInt(args[1].substring(3));
 								task.jobID = Integer.parseInt(args[0].substring(3));
 								task.inputfile.add(tmp.chunckname);

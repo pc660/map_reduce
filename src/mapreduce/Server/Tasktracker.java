@@ -77,8 +77,16 @@ public class Tasktracker {
 					
 					//run task
 					//t.config.localize();
-					Mapper map = (Mapper) t.config.getMapper();
-					map.test();
+					//Mapper map = (Mapper) t.config.getMapper();
+					Task tmp = new Task ( t.config);
+					try {
+						System.out.println("Do mapper");
+						Thread thread = tmp.do_mapper();
+						thread.start();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					
 					

@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import file.Chunck;
 import mapreduce.Jobconfig;
 
 public class Taskconfig implements Serializable{
@@ -18,6 +19,7 @@ public class Taskconfig implements Serializable{
 	public ArrayList<Byte> jar;
 	//public HashMap<String, String> Inputfile;
 	public ArrayList<String> inputfile;
+	public Chunck mapinput;
 	public int numOfRed;
 	public Taskconfig()
 	{
@@ -107,7 +109,7 @@ public class Taskconfig implements Serializable{
 			
 			try {
 				//System.out.println(this.config.classname);
-				Class t = Class.forName(this.config.classname + "$map");
+				Class t = Class.forName(this.config.classname + "$Map");
 				return t.newInstance();
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -134,7 +136,7 @@ public class Taskconfig implements Serializable{
 		{
 			Class t;
 			try {
-				t = Class.forName(this.config.classname + "$reduce");
+				t = Class.forName(this.config.classname + "$Reduce");
 				return t.newInstance();
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block

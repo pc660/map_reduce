@@ -33,8 +33,8 @@ public class Jobconfig implements Serializable {
 	        this.jarname = filename;
 	        
 	        String new_name = filename.substring(0, filename.length() -6);
-	        String map_name = new_name + "$map.class";
-	        String reduce_name = new_name + "$reduce.class";
+	        String map_name = new_name + "$Map.class";
+	        String reduce_name = new_name + "$Reduce.class";
 	        System.out.println(map_name);
 	        
 	        br = new FileInputStream(map_name);
