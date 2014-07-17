@@ -4,10 +4,14 @@ public class KVPair implements Comparable<KVPair> {
 	private String key;
 	private String value;
 	public KVPair(String line) {
+		
 		line = line.trim();
 		String[] parts = line.split("\t");
-		this.key = parts[0];
-		this.value = parts[1];	
+		
+			this.key = parts[0];
+			this.value = parts[1];	
+		
+		
 	}
 	public KVPair(String key, String value) {
 		this.key = key.trim();
@@ -17,6 +21,7 @@ public class KVPair implements Comparable<KVPair> {
 	@Override
 	public int compareTo(KVPair o) {
 		// TODO Auto-generated method stub
+		
 		return this.key.compareTo(o.getKey());
 	}
 	public String getKey() {

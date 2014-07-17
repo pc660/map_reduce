@@ -49,7 +49,7 @@ public class ReduceRecordReader extends RecordReader<String, String> {
 	@Override
 	public boolean nextKeyVlaue() throws Exception {
 		// TODO Auto-generated method stub
-		System.out.println("aslkdhaskldjalksjdklsj");
+		//System.out.println("aslkdhaskldjalksjdklsj");
 		if (!scanner.hasNextLine()) 
 		{
 			System.out.println("no next line");

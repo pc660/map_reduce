@@ -1,8 +1,12 @@
 package mapreduce.Server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+
 import file.*;
+
 import java.util.*;
+
 import file.DFSfile;
 import File_system.DistributedFileSystem;
 import mapreduce.Jobconfig;
@@ -40,13 +44,13 @@ public class Jobmanager {
 		status.job_id = id;
 		status.jobio = new HashMap<String, Class>();
 		status.status = Status.Runnable;
-		status.reduceinput = new HashMap<String, String>();
+		status.reduceinput = new HashMap<String,  ArrayList <String >   > ();
 		//get DFS
 		status.jobConfig = config;
 		status.mapstate = new HashMap<String, Status>();
 		status.reducestate = new HashMap<String, Status>();
 		status.mapinput = new HashMap<String, ArrayList<Chunck>  >();
-		
+		status.reduceinput = new HashMap<String , ArrayList<String>> ();
 		//get map and reduce num
 		
 		DistributedFileSystem dfs = new DistributedFileSystem();
@@ -63,11 +67,22 @@ public class Jobmanager {
 			String taskID = "job" + id + "_map" + i;
 			status.mapstate.put(taskID, Status.Runnable);
 			status.mapinput.put(taskID, file.chuncklist.get(i));
+			//System.out.println("task id " + taskID + " chunck  " + i);
+			
+			
 			for (int j = 0; j< status.reduce_num; j++)
 			{
 				String reduce_input = config.filename + "_chunck" + i  + "_" + j;
 				String reduce_name = "job" + status.job_id + "_reduce" + j;
-				status.reduceinput.put(reduce_name, reduce_input);
+				//System.out.println(reduce_name);
+				if (status.reduceinput.containsKey(reduce_name))
+				status.reduceinput.get(reduce_name).add(reduce_input);
+				else
+				{
+					ArrayList<String> tmp = new ArrayList<String> ();
+					tmp.add(reduce_input);
+					status.reduceinput.put(reduce_name, tmp);
+				}
 			}
 	//		String name = config.filename + "_chunck" + i;
 	//		for ()

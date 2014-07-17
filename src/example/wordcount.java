@@ -41,7 +41,7 @@ public class wordcount {
 			}
 			
 			String value = count+"";
-			System.out.println("key" + key + " value" + value);
+			//System.out.println("key" + key + " value" + value);
 			out.collect(key, value);
 
 		}

@@ -134,9 +134,12 @@ public class Task {
 						ArrayList<String>  localFileNames = new ArrayList<String>();
 						taskStatus.state = Status.Running;
 						Reducer reducer =  (Reducer) taskConfig.getReducer();
-						for (String str : taskConfig.inputfile.keySet()) {
-							
-							String path = Tools.downloadDFSToLocal(taskConfig.inputfile.get(str), taskStatus.log);
+						String reduce_name = "job" + taskConfig.jobID + "_reduce" + taskConfig.taskID;
+						
+						System.out.println(reduce_name);
+						for (String str : taskConfig.inputfile.get(reduce_name)   ) {
+						//	System.out.println(taskConfig.inputfile.get(str));
+							String path = Tools.downloadDFSToLocal(str, taskStatus.log);
 							
 							if (path == null) {
 								taskStatus.state = Status.Fail;
@@ -154,17 +157,23 @@ public class Task {
 						
 						
 						for (int i = 1; i < localFileNames.size(); i++) {
+							
 							String mergedFileName = taskConfig.jobID+ "_" + taskConfig.taskID + "_" + i;
+							System.out.println("This is the merge" + i);
 							basepath = Tools.mergeSortedFiles(basepath, localFileNames.get(i), mergedFileName,taskStatus.log);
 							if (basepath == null) {
 								taskStatus.state = Status.Fail;
+								
 								System.out.println("Failed during Tools.mergeSortedFiles");
 								taskStatus.log.add("Failed during Tools.mergeSortedFiles");
 								return;
 							}
 						}
+						
+						
 							System.out.println("finish merge now!");
 							String mergedFilePath = basepath;
+						
 							ReduceRecordReader rr = new ReduceRecordReader(mergedFilePath, taskStatus.log);
 							if (!rr.init()) {
 								taskStatus.state = Status.Fail;
@@ -190,15 +199,15 @@ public class Task {
 								while(rr.nextKeyVlaue()) {
 									String newKey = rr.getCurrentKey();
 									value = rr.getCurrentValue();
-									System.out.println("one reducer");
-									System.out.println(list.size());
+									//System.out.println("one reducer");
+									//System.out.println(list.size());
 									if (key == null || newKey.equals(key)) {
 										list.add(value);
 										
 										key = newKey;
 									} else {
-										System.out.println(key);
-										System.out.println(newKey);
+										//System.out.println(key);
+										//System.out.println(newKey);
 										reducer.reduce(key, list.iterator(), out);
 										key = newKey;
 										list = new ArrayList<String>();
@@ -218,7 +227,7 @@ public class Task {
 								e.printStackTrace();
 								return;
 							}
-
+							
 							out.close();
 
 							//Upload results to DFS;
@@ -233,6 +242,7 @@ public class Task {
 							}
 							resultFile = null;
 							taskStatus.state = Status.Succeed;
+						
 						}
 					
 

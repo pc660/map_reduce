@@ -75,6 +75,7 @@ public class Tools {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				log.add("Failed during createLocalFile in Tool.downloadDFSToLocal");
+				e.printStackTrace();
 				return null;
 			}
 		}
@@ -83,6 +84,7 @@ public class Tools {
 		BufferedWriter bw;
 		try {
 			fw = new FileWriter(file.getAbsoluteFile());
+			//System.out.println("download from DFS " + file.getAbsolutePath());
 			bw = new BufferedWriter(fw);
 			for (ArrayList<Chunck> list : lists) {
 				ChunckReader chunckReader = new ChunckReader(list.get(0));
@@ -97,6 +99,7 @@ public class Tools {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			log.add("Failed during readChunck in Tool.downloadDFSToLocal");
+			e.printStackTrace();
 			return null;
 		}
 		return retrunPath;
@@ -114,12 +117,13 @@ public class Tools {
 		file1 = new File(pathname1);
 		file2 = new File(pathname2);
 		try {
-			System.out.println(file1);
+			//System.out.println("merge file1 " + file1);
 			scanner1 = new Scanner(file1);
 			scanner2 = new Scanner(file2);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			log.add("Failed during new scanner1/2 in Tool.mergeSortedFiles");
+			e.printStackTrace();
 			return null;
 		}
 		mergedFile = new File(mergedFileName);
@@ -129,6 +133,7 @@ public class Tools {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			log.add("Failed during new PrintWriter(mergedFile) in Tool.mergeSortedFiles");
+			e.printStackTrace();
 			return null;
 		}
 
@@ -137,24 +142,71 @@ public class Tools {
 		String line1 = null;
 		String line2 = null;	
 		if (scanner1.hasNextLine()) {
-			System.out.println(line1);
+			//System.out.println(line1);
 			line1 = scanner1.nextLine();
-			kvpair1 = new KVPair(line1);
+			
+			line1 = line1.trim();
+			String[] parts = line1.split("\t");
+			if (parts.length ==2 ){
+				kvpair1 = new KVPair(parts[0],parts[1]);
+			}
+			
 		}
 		if (scanner2.hasNextLine()) {
 			line2 = scanner2.nextLine();
-			kvpair2 = new KVPair(line2);
+			//line2 = scanner1.nextLine();
+			
+			line2 = line2.trim();
+			String[] parts = line2.split("\t");
+			if (parts.length ==2 ){
+				kvpair2 = new KVPair(parts[0],parts[1]);
+			}
+		//	kvpair2 = new KVPair(line2);
 		}
 
 		while (line1 != null  && line2 != null) {
-			System.out.println(line1);
-			System.out.println(line2);
+			//System.out.println(line1);
+			//System.out.println(line2);
+			if (kvpair1 == null )
+			{
+				if (scanner1.hasNextLine()){
+					line1 = scanner1.nextLine();
+					line1 = line1.trim();
+					String[] parts = line1.split("\t");
+					if (parts.length ==2 ){
+						kvpair1 = new KVPair(parts[0],parts[1]);
+					}
+				}
+				continue;
+			}
+			else if (kvpair2 == null)
+			{
+				if (scanner2.hasNext()) {
+					line2 = scanner2.nextLine();
+					line2 = line2.trim();
+					String[] parts = line2.split("\t");
+					if (parts.length ==2 ){
+						kvpair2 = new KVPair(parts[0],parts[1]);
+					}
+				} 
+				continue;
+			}
+			
 			int comp = kvpair1.compareTo(kvpair2);
 			if (comp < 0) {
 				mergedFilePrinter.println(kvpair1.toString());
 				if (scanner1.hasNext()) {
 					line1 = scanner1.nextLine();
-					kvpair1 = new KVPair(line1);
+					
+					line1 = line1.trim();
+					String[] parts = line1.split("\t");
+					if (parts.length ==2 ){
+						kvpair1 = new KVPair(parts[0],parts[1]);
+					}
+					else continue;
+					
+					
+					//kvpair1 = new KVPair(line1);
 				} else {
 					line1 = null;
 					kvpair1 = null;
@@ -163,7 +215,13 @@ public class Tools {
 				mergedFilePrinter.println(kvpair2.toString());
 				if (scanner2.hasNext()) {
 					line2 = scanner2.nextLine();
-					kvpair2 = new KVPair(line2);
+					line2 = line2.trim();
+					String[] parts = line2.split("\t");
+					if (parts.length ==2 ){
+						kvpair2 = new KVPair(parts[0],parts[1]);
+					}
+					else continue;
+					//kvpair2 = new KVPair(line2);
 				} else {
 					line2 = null;
 					kvpair2 = null;
@@ -176,8 +234,10 @@ public class Tools {
 		while (line1 != null) {
 			kvpair1 = new KVPair(line1);
 			mergedFilePrinter.println(kvpair1.toString());
+			
 			if (scanner1.hasNextLine())
 				line1 = scanner1.nextLine();
+			else break;
 		}
 
 		while (line2 != null) {
@@ -185,10 +245,11 @@ public class Tools {
 			mergedFilePrinter.println(kvpair2.toString());
 			if (scanner2.hasNextLine())
 				line2 = scanner2.nextLine();
+			else break;
 		}
 		
-		file1.delete();
-		file2.delete();
+		//file1.delete();
+		//file2.delete();
 		scanner1.close();
 		scanner2.close();
 		mergedFilePrinter.close();
@@ -198,6 +259,7 @@ public class Tools {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			log.add("Failed during returnPath = mergedFile.getCanonicalPath(); in Tool.mergeSortedFiles");
+			e.printStackTrace();
 			return null;
 		}
 		
