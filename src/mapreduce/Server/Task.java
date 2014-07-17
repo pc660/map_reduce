@@ -77,7 +77,7 @@ public class Task {
 
 					public void run()
 					{	
-						
+						taskStatus.state = Status.Running;
 						//System.out.println(taskConfig.mapinput.chunckname);
 						if (!rr.init()) {
 							taskStatus.state = Status.Fail;
