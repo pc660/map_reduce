@@ -29,6 +29,7 @@ public class Comm {
 	public int max_size;
 	public DFSfile getFile (String filename) throws UnknownHostException, IOException, ClassNotFoundException
 	{
+		System.out.println(NameNode_address);
 		Socket s = new Socket (NameNode_address, NameNode_read_port);
 		GetMessage m = new GetMessage(filename);
 		ObjectOutputStream output = new ObjectOutputStream (s.getOutputStream());

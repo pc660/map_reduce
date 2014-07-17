@@ -1,5 +1,6 @@
 package mapreduce.Server;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,6 +10,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import ding.Mapper;
+import File_system.DistributedFileSystem;
 import MessageForMap.*;
 //import MessageForMap.SlaveMessage;
 
@@ -55,9 +57,12 @@ public class Tasktracker {
 		{
 			for(String i : manger.tasks.keySet())
 			{
+				
 				Taskstatus task = manger.tasks.get(i);
 				if(task.state == Status.Succeed)
 				{
+				//	task.config.numOfRed
+				//	task.
 					if(task.type.equals("map"))
 					{
 						manger.map_num--;
@@ -69,6 +74,20 @@ public class Tasktracker {
 						manger.reduce_num--;
 						manger.reduce_slot++;
 						task.state = Status.Finished;
+						DistributedFileSystem dfs = new DistributedFileSystem();
+						
+						for (int j = 0; j< task.config.numOfRed;j++)
+						{
+							String filename = task.config.config.filename;
+							File file = new File (filename + "_chunck" + j + "_" + task.taskId);
+							if (file.exists())
+								file.delete();
+							dfs.removeFile(filename + "_chunck" + j + "_" + task.taskId);
+							
+						}
+						
+//						task.jobId
+//						task.taskId
 					}
 					else
 					{
