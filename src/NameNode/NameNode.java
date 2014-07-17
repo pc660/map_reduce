@@ -119,8 +119,8 @@ public class NameNode {
 			//start service now
 			System.out.println("Finish  NameNode");
 			start_service();
-			checkpoint check = new checkpoint();
-			check.start();
+			//checkpoint check = new checkpoint();
+			//check.start();
 			
 			heartBeat heart = new heartBeat();
 			heart.start();

@@ -174,7 +174,7 @@ public class Tasktracker {
 		{
 			while(true){
 			try {
-				Socket s = new Socket ("127.0.0.1", 10002);
+				Socket s = new Socket ("128.237.199.44", 10002);
 				ObjectOutputStream output = new ObjectOutputStream (s.getOutputStream());
 				SlaveMessage msg = new SlaveMessage();
 				msg.hostname = server.getLocalSocketAddress().toString();
