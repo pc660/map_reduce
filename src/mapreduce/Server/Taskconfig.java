@@ -18,16 +18,16 @@ public class Taskconfig implements Serializable{
 	public String jobtype;
 	public ArrayList<Byte> jar;
 	//public HashMap<String, String> Inputfile;
-	public ArrayList<String> inputfile;
+	public HashMap<String, String> inputfile;
 	public Chunck mapinput;
 	public int numOfRed;
 	public Taskconfig()
 	{
-		inputfile = new ArrayList<String>();
+		inputfile = new  HashMap<String ,String>();
 	}
 	
 	public Taskconfig(int jobID, int taskID, String jobtype, 
-			ArrayList<String> inputfile, int numOfRed, ArrayList<Byte> jar) {
+			HashMap<String, String> inputfile, int numOfRed, ArrayList<Byte> jar) {
 		this.jobID = jobID;
 		this.taskID = taskID;
 		this.jobtype = jobtype;

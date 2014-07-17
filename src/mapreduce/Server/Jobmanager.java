@@ -40,7 +40,7 @@ public class Jobmanager {
 		status.job_id = id;
 		status.jobio = new HashMap<String, Class>();
 		status.status = Status.Runnable;
-		
+		status.reduceinput = new HashMap<String, String>();
 		//get DFS
 		status.jobConfig = config;
 		status.mapstate = new HashMap<String, Status>();
@@ -55,7 +55,7 @@ public class Jobmanager {
 		System.out.println("map num " + status.map_num);
 		status.unassigned_map = status.map_num;
 		//hard code
-		status.reduce_num = 1;
+		status.reduce_num = status.map_num;
 		status.unassigned_reduce = status.reduce_num;
 		//initilize map
 		for (int i = 0; i< status.map_num ; i++)
@@ -63,14 +63,20 @@ public class Jobmanager {
 			String taskID = "job" + id + "_map" + i;
 			status.mapstate.put(taskID, Status.Runnable);
 			status.mapinput.put(taskID, file.chuncklist.get(i));
-			
+			for (int j = 0; j< status.reduce_num; j++)
+			{
+				String reduce_input = config.filename + "_chunck" + i  + "_" + j;
+				String reduce_name = "job" + status.job_id + "_reduce" + j;
+				status.reduceinput.put(reduce_name, reduce_input);
+			}
+	//		String name = config.filename + "_chunck" + i;
+	//		for ()
 		}
 		
 		for (int i = 0; i< status.reduce_num;i++)
 		{
 			String taskID = "job" + id + "_reduce" + i;
-			status.reducestate.put(taskID, Status.Runnable);
-			
+			status.reducestate.put(taskID, Status.Runnable);	
 		}
 		jobQueue.put(id, status);
 	
@@ -95,6 +101,7 @@ public class Jobmanager {
 		//return a map with the corresponding hostname
 		//if not exist, return the first one
 		Taskconfig task = null;
+		String pos = null; 
 		boolean judge = false;
 		if (job.unassigned_map == 0 )
 			return null;
@@ -124,7 +131,7 @@ public class Jobmanager {
 							task.mapinput = tmp;
 							task.numOfRed = job.reduce_num;
 							job.unassigned_map --;
-							
+							job.mapstate.put(str, Status.Suspend);
 							return task;
 						}
 						else
@@ -140,15 +147,19 @@ public class Jobmanager {
 								task.numOfRed = job.reduce_num;
 								task.taskID = Integer.parseInt(args[1].substring(3));
 								task.jobID = Integer.parseInt(args[0].substring(3));
-								task.inputfile.add(tmp.chunckname);
+								task.mapinput = tmp;
+								pos = str;
+								//task.inputfile.add(tmp.chunckname);
 							}
 						}
 					}
 				}
 			}
 		}
-		if(task != null)
+		if(task != null){
+			job.mapstate.put(pos, Status.Suspend);
 			job.unassigned_map --;
+		}
 		return task;
 	}
 	
@@ -170,13 +181,15 @@ public class Jobmanager {
 					task = new Taskconfig();
 					task.jobtype = "reduce";
 					task.jar = job.jobConfig.jar;
-					
+					task.numOfRed = job.reduce_num;
+					task.config = job.jobConfig;
 					String [] args = str.split("_");
 					
 					task.taskID = Integer.parseInt(args[1].substring(6));
 					task.jobID = Integer.parseInt(args[0].substring(3));
 					task.inputfile = job.reduceinput;
 					job.unassigned_reduce --;
+					job.reducestate.put(str, Status.Suspend);
 					return task;
 					
 					

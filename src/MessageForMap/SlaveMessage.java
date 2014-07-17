@@ -12,5 +12,6 @@ public class SlaveMessage extends Message{
 	public String hostname; 
 	public int port;
 	public String root;
+	public HashMap<Integer, Taskstatus> task_list;
 
 }

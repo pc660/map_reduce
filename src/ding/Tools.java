@@ -1,9 +1,11 @@
 package ding;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,7 +59,7 @@ public class Tools {
 		return true;
 	}
 */
-	public static String downloadDFSToLocal(String fileName) {
+	public static String downloadDFSToLocal(String fileName, ArrayList<String> log) {
 		DistributedFileSystem dfs = new DistributedFileSystem();
 		DFSfile dfsFile =  dfs.getFile(fileName);
 		ArrayList<ArrayList<Chunck>> lists= dfsFile.chuncklist;
@@ -65,14 +67,15 @@ public class Tools {
 		//	FileOutputStream writeStream = null;
 		file = new File(fileName);
 		//	writeStream = new FileOutputStream(newFile);
-
+		//System.out.println(fileName);
 		// if file doesnt exists, then create it
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.add("Failed during createLocalFile in Tool.downloadDFSToLocal");
+				return null;
 			}
 		}
 		String retrunPath = null;
@@ -85,34 +88,39 @@ public class Tools {
 				ChunckReader chunckReader = new ChunckReader(list.get(0));
 				String line = null;
 				while ((line = chunckReader.readline()) != null) {
-					bw.write(line);
+					//System.out.println(line);
+					bw.write(line + "\n");
 				}
 			}
 			bw.close();
 			retrunPath = file.getCanonicalPath();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.add("Failed during readChunck in Tool.downloadDFSToLocal");
+			return null;
 		}
 		return retrunPath;
 	}
 
-	public static String mergeSortedFiles(String pathname1, String pathname2, String mergedFileName) {
+	public static String mergeSortedFiles(String pathname1, String pathname2, String mergedFileName, ArrayList<String> log) {
 		File file1 = null;
 		File file2 = null;
 		File mergedFile = null;
 		Scanner scanner1 = null;
 		Scanner scanner2 = null;
+		
 		//		String tmpFileName = mergedFileName;
-
+		
 		file1 = new File(pathname1);
 		file2 = new File(pathname2);
 		try {
+			System.out.println(file1);
 			scanner1 = new Scanner(file1);
 			scanner2 = new Scanner(file2);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.add("Failed during new scanner1/2 in Tool.mergeSortedFiles");
+			return null;
 		}
 		mergedFile = new File(mergedFileName);
 		PrintWriter mergedFilePrinter = null;
@@ -120,7 +128,8 @@ public class Tools {
 			mergedFilePrinter = new PrintWriter(mergedFile);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.add("Failed during new PrintWriter(mergedFile) in Tool.mergeSortedFiles");
+			return null;
 		}
 
 		KVPair kvpair1 = null;
@@ -128,6 +137,7 @@ public class Tools {
 		String line1 = null;
 		String line2 = null;	
 		if (scanner1.hasNextLine()) {
+			System.out.println(line1);
 			line1 = scanner1.nextLine();
 			kvpair1 = new KVPair(line1);
 		}
@@ -137,6 +147,8 @@ public class Tools {
 		}
 
 		while (line1 != null  && line2 != null) {
+			System.out.println(line1);
+			System.out.println(line2);
 			int comp = kvpair1.compareTo(kvpair2);
 			if (comp < 0) {
 				mergedFilePrinter.println(kvpair1.toString());
@@ -164,15 +176,17 @@ public class Tools {
 		while (line1 != null) {
 			kvpair1 = new KVPair(line1);
 			mergedFilePrinter.println(kvpair1.toString());
-			line1 = scanner1.nextLine();
+			if (scanner1.hasNextLine())
+				line1 = scanner1.nextLine();
 		}
 
 		while (line2 != null) {
 			kvpair2 = new KVPair(line2);
 			mergedFilePrinter.println(kvpair2.toString());
-			line2 = scanner2.nextLine();
+			if (scanner2.hasNextLine())
+				line2 = scanner2.nextLine();
 		}
-
+		
 		file1.delete();
 		file2.delete();
 		scanner1.close();
@@ -183,7 +197,8 @@ public class Tools {
 			returnPath = mergedFile.getCanonicalPath();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.add("Failed during returnPath = mergedFile.getCanonicalPath(); in Tool.mergeSortedFiles");
+			return null;
 		}
 		
 		return returnPath;

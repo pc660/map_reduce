@@ -110,9 +110,64 @@ public class Jobtracker {
 				e.printStackTrace();
 			}
 		}
+		public synchronized void updateJobStatus (SlaveMessage msg)
+		{
+			HashMap<String, Taskstatus> map = msg.tasks;
+			
+			for (String str : map.keySet() )
+			{
+				System.out.println(str);
+				String [] args = str.split("_");
+				int id = Integer.parseInt(args[0].substring(3));
+				Jobstatus job = jobmanager.jobQueue.get(id);
+				if (args[1].contains("map"))
+				{
+					if (job.mapstate.containsKey(str))
+					{
+						job.mapstate.put(str, map.get(str).state);
+					}
+					else 
+					{
+						System.out.println("wierd in update");
+					}
+				}
+				else if (args[1].contains("reduce") )
+				{
+					if (job.reducestate.containsKey(str))
+					{
+						job.mapstate.put(str, map.get(str).state);
+					}
+					else 
+					{
+						System.out.println("wierd in update");
+					}
+				}
+			}
+			
+			for (Integer i : jobmanager.jobQueue.keySet())
+			{
+				Jobstatus job = jobmanager.jobQueue.get(i);
+				boolean judge = true;
+				for (String str : job.mapstate.keySet())
+				{
+					if (job.mapstate.get(str) != Status.Finished)
+						judge = false;
+				}
+				if (judge){
+					job.map_finished = true;
+					System.out.println("job " + i + " map finished");
+				}
+			}
+			
+			
+			
+		}
 		
 		public ArrayList<Taskconfig> schedule (SlaveMessage msg)
 		{
+			
+			//update job infor
+			updateJobStatus (msg);
 			
 			//check available slots
 			ArrayList<Taskconfig > list = new ArrayList<Taskconfig> ();
@@ -127,6 +182,7 @@ public class Jobtracker {
 					return list;
 				}
 				Taskconfig task = jobmanager.assign_map(msg.hostname, job);
+				
 				if (task == null)
 				{
 					System.out.println("Job ID: " + job.job_id + "does not have available map");
@@ -135,11 +191,15 @@ public class Jobtracker {
 					{
 						System.out.println("Job ID: " + job.job_id + "does not have available reduce");
 					}
-					else
+					else{
 						list.add(task);
-				}
-				else
+						System.out.println( "Job"+ task.jobID + "reduce" + task.taskID );
+					}
+					}
+				else{
+					System.out.println( "Job"+ task.jobID + "_map" + task.taskID );
 					list.add(task);
+				}
 				
 			}
 			System.out.println("list size " + list.size());
@@ -179,9 +239,14 @@ public class Jobtracker {
 		public synchronized Message handleMessage(SlaveMessage msg)
 		{
 			ArrayList<Taskconfig>  list = null;
+			
+			
+			//updateJob
+			
 			if (taskmanger.containsKey(msg.slaveID) )
-			{
+			{		
 				list = schedule (msg);
+				
 			}
 			else
 			{
@@ -211,6 +276,7 @@ public class Jobtracker {
 						 * check slave info and assign tasks
 						 * 
 						 * */
+						System.out.println("receive msg");
 						Message m = handleMessage ((SlaveMessage)msg);
 						ObjectOutputStream output = new ObjectOutputStream (socket.getOutputStream());
 						output.writeObject(m);

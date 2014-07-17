@@ -143,7 +143,7 @@ public class main {
 			config.reduceOutputValueClass = String.class;
 			//config.mapInputPath = "1";
 			//config.setJar("bin/example/wordcount.class");
-			config.filename = "1";
+			config.filename = "0";
 			config.setJar("bin/example/wordcount.class");
 			config.classname = "example.wordcount";
 			//String s= "bin/example/wordcount.class";

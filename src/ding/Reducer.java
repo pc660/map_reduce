@@ -1,5 +1,6 @@
 package ding;
 import java.io.Serializable;
+import java.util.Iterator;
 
 /**
  * 
@@ -25,8 +26,9 @@ public abstract class Reducer <INKEY, INVALUE, OUTKEY, OUTVALUE> implements Seri
 	 * @param out		OutputCollector for use to write  data
 	 * @throws Exception
 	 */
-	public void reduce(INKEY key, INVALUE value, 
+	public void reduce(INKEY key, Iterator<INVALUE> value, 
 			OutputCollector<OUTKEY, OUTVALUE> out) throws Exception{
+		//System.out.println("test reducer");
 		throw new Exception("Need to implement reducer by users");
 	}
 }

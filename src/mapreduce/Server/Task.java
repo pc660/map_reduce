@@ -30,15 +30,23 @@ public class Task {
 		taskStatus.state = Status.Runnable;
 		taskStatus.log = new ArrayList<String>();
 	}
+	public Task (Taskstatus status)
+	{
+		this.taskConfig = status.config;
+		this.taskStatus = status;
+		
+	}
 	
 	public void runTask() {
 		String jobType = taskConfig.jobtype.toLowerCase();
 		if (jobType.equals("map")) {
+			taskStatus.state = Status.Running;
 			runMapTask();
-			taskStatus.state = Status.Running;
+			
 		} else if (jobType.equals("reduce")) {
-			runReduceTask();
 			taskStatus.state = Status.Running;
+			runReduceTask();
+			
 		}
 		taskStatus.state = Status.Fail;
 		taskStatus.log.add("Can not runTask()");
@@ -111,72 +119,127 @@ public class Task {
 		
 	}
 	
+
 	public Thread do_reducer ()
 	{
-		
+
 		return new Thread ( 
-				
+
 				new Runnable ()
 				{
+
+
 					public void run()
-					{
-						
-					}
-				/*	ArrayList<String>  localFileNames = new ArrayList<String>();
-					public void run()
-					{
-						for (String filename : taskConfig.inputfile) {
-							localFileNames.add(Tools.downloadDFSToLocal(filename));
+					{	
+						ArrayList<String>  localFileNames = new ArrayList<String>();
+						taskStatus.state = Status.Running;
+						Reducer reducer =  (Reducer) taskConfig.getReducer();
+						for (String str : taskConfig.inputfile.keySet()) {
+							
+							String path = Tools.downloadDFSToLocal(taskConfig.inputfile.get(str), taskStatus.log);
+							
+							if (path == null) {
+								taskStatus.state = Status.Fail;
+								taskStatus.log.add("Failed during Tools.downloadDFSToLocal");
+								return;
+							}
+							//System.out.println("path: " + path);
+							localFileNames.add(path);
 						}
 						
 						String basepath = localFileNames.get(0);
+						System.out.println("basepath: " + basepath);
+						
+						
+						
+						
 						for (int i = 1; i < localFileNames.size(); i++) {
 							String mergedFileName = taskConfig.jobID+ "_" + taskConfig.taskID + "_" + i;
-							basepath = Tools.mergeSortedFiles(basepath, localFileNames.get(i), mergedFileName);
+							basepath = Tools.mergeSortedFiles(basepath, localFileNames.get(i), mergedFileName,taskStatus.log);
+							if (basepath == null) {
+								taskStatus.state = Status.Fail;
+								System.out.println("Failed during Tools.mergeSortedFiles");
+								taskStatus.log.add("Failed during Tools.mergeSortedFiles");
+								return;
+							}
 						}
-						String mergedFilePath = basepath;
-						ReduceRecordReader rr = new ReduceRecordReader(mergedFilePath);
-						String resultFileName = "job" + taskConfig.jobID + "_result_" + "part"+ taskConfig.taskID;
-						RedecerOutputCollector out = new RedecerOutputCollector(resultFileName);
-						
-						ArrayList<String> list = new ArrayList<String>();
-						String key = null;
-						String value = null;
-						while(rr.nextKeyVlaue()) {
-							String newKey = rr.getCurrentKey();
-							value = rr.getCurrentValue();
-							if (key == null || newKey.equals(key)) {
-								list.add(value);
-								key = newKey;
-							} else {
-								reduce.reduce(key, list.iterator(), out);
-								key = newKey;
-								list = new ArrayList<String>();
-								list.add(value);
-							}	
+							System.out.println("finish merge now!");
+							String mergedFilePath = basepath;
+							ReduceRecordReader rr = new ReduceRecordReader(mergedFilePath, taskStatus.log);
+							if (!rr.init()) {
+								taskStatus.state = Status.Fail;
+								System.out.println("Failed during init.ReduceRecordReader");
+								taskStatus.log.add("Failed during init ReduceRecordReader");
+								return;
+							}
+							
+							String resultFileName =  "job" + taskConfig.jobID + "_result_" + "part"+ taskConfig.taskID;
+							RedecerOutputCollector out = new RedecerOutputCollector("data/"+ resultFileName, taskStatus.log);
+							if (!out.init()) {
+								taskStatus.state = Status.Fail;
+								System.out.println("Failed during init.RedecerOutputCollector");
+								taskStatus.log.add("Failed during init RedecerOutputCollector");
+								return;
+							}
+							
+							ArrayList<String> list = new ArrayList<String>();
+							String key = null;
+							String value = null;
+							System.out.println("now start working");
+							try {
+								while(rr.nextKeyVlaue()) {
+									String newKey = rr.getCurrentKey();
+									value = rr.getCurrentValue();
+									System.out.println("one reducer");
+									System.out.println(list.size());
+									if (key == null || newKey.equals(key)) {
+										list.add(value);
+										
+										key = newKey;
+									} else {
+										System.out.println(key);
+										System.out.println(newKey);
+										reducer.reduce(key, list.iterator(), out);
+										key = newKey;
+										list = new ArrayList<String>();
+										list.add(value);
+									}	
+								}
+
+								// do the last key values
+								if (list.size() > 0) {
+									reducer.reduce(key, list.iterator(), out);
+								}
+
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								taskStatus.state = Status.Fail;
+								taskStatus.log.add("Failed during input K/V pair to reduce");
+								e.printStackTrace();
+								return;
+							}
+
+							out.close();
+
+							//Upload results to DFS;
+							DistributedFileSystem dfs = new DistributedFileSystem();
+							System.out.println("**************upload" + resultFileName);
+							dfs.uploadFile(resultFileName);
+							System.out.println("*************Finish uploading");
+							//deldete local files
+							File resultFile = new File(resultFileName);
+							if (resultFile.exists() && resultFile.isFile()) {
+								resultFile.delete();
+							}
+							resultFile = null;
+							taskStatus.state = Status.Succeed;
 						}
-						// do the last key values
-						if (list.size() > 0) {
-							reducer.reduce(key, list.iterator(), out);
-						}
-						
-						out.close();
-						
-						//Upload results to DFS;
-						DistributedFileSystem dfs = new DistributedFileSystem();
-						dfs.uploadFile(resultFileName);
-						
-						//deldete local files
-						File resultFile = new File(resultFileName);
-						if (resultFile.exists() && resultFile.isFile()) {
-							resultFile.delete();
-						}
-						resultFile = null;
-						taskStatus.state = Status.Succeed;
-					}*/
+					
+
+
 				}
-			);
-		
+				);
+
 		
 	}
 }

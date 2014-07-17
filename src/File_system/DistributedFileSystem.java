@@ -130,7 +130,7 @@ public class DistributedFileSystem {
 				Chunck chunck = getNextChunck(dfsfile);
 				String chunck_name = dfsfile.filename + "_chunck" + chunck.id;
 				chunck.chunckname = chunck_name;
-				System.out.println(chunck.chunckname);
+			//	System.out.println(chunck.chunckname);
 				communication.uploadChunck(text, chunck);
 			}
 			}
