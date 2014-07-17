@@ -74,13 +74,14 @@ public class Tasktracker {
 					{
 						System.out.println("Remove Success Tasks wired");
 					}
-				}
-				
-				
-				
+				}				
 			}
+			
 			System.out.println("Running map " + manger.map_num);
 			System.out.println("Running reduce " + manger.reduce_num);
+			
+			
+			
 		}
 		
 		public void showTasks ()
@@ -179,6 +180,7 @@ public class Tasktracker {
 				msg.hostname = server.getLocalSocketAddress().toString();
 				if (msg.hostname.contains("0.0.0.0"))
 					msg.hostname = "127.0.0.1";
+				System.out.println(msg.hostname);
 				msg.port = taskport;
 				msg.map_slot = manger.free_map_slots();
 				msg.reduce_slot = manger.free_reduce_slots();

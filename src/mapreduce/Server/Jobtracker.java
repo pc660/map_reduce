@@ -213,6 +213,9 @@ public class Jobtracker {
 			TaskManager task = new TaskManager(msg.CPU);
 		//	task.cpu_num = msg.CPU;
 			task.hostname = msg.hostname;
+			
+			
+			
 			task.port = msg.port;
 			//task.map_num = msg.map_slot;
 			HashMap<String, Taskstatus> tasks = msg.tasks;

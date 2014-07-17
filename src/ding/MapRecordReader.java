@@ -30,6 +30,9 @@ public class MapRecordReader extends RecordReader<String, String>{
 	public void close() {
 		// TODO Auto-generated method stub
 	}
+	
+
+	
 	@Override
 	public boolean init() {
 		try {

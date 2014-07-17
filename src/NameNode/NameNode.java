@@ -247,6 +247,7 @@ public class NameNode {
 					else if (m instanceof DatanodeAckMessage)
 					{
 						addDataNode(((DatanodeAckMessage) m).info);
+						
 						updatefileInfo ( ((DatanodeAckMessage) m).map  );
 					}
 					else if (m instanceof DeleteFileMessage)
@@ -340,6 +341,7 @@ public class NameNode {
 	{
 		if (!StorageMap.containsKey(info))
 		{
+			System.out.println(info.hostname);
 			dataNodeMap.add(info);
 			StorageMap.put(info, 0);
 		}
