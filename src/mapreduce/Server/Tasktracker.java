@@ -193,7 +193,7 @@ public class Tasktracker {
 		{
 			while(true){
 			try {
-				Socket s = new Socket ("unix4.andrew.cmu.edu", 10002);
+				Socket s = new Socket ("unix6.andrew.cmu.edu", 10002);
 				ObjectOutputStream output = new ObjectOutputStream (s.getOutputStream());
 				SlaveMessage msg = new SlaveMessage();
 				msg.hostname = server.getLocalSocketAddress().toString();
