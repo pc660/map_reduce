@@ -267,18 +267,20 @@ public class DataNode {
 					Socket ss = heartbeat_listening.accept();
 					 BufferedReader in = new BufferedReader( new InputStreamReader(ss.getInputStream()));
 					 String line = "";
-				//	 System.out.println("Accepted");
+					 //	 System.out.println("Accepted");
 					 while (  (line = in.readLine())!=null )
 					 {
-					//	 System.out.println(line);
+						 //	 System.out.println(line);
 						 if (line.equals("Alive"))
 							 break;
 					 }
 					 
 					 ObjectOutputStream output = new ObjectOutputStream(   ss.getOutputStream());
-					// System.out.println(chunck_map.size());
-					 output.writeObject(chunck_map);
-					 output.flush();
+					 // System.out.println(chunck_map.size() );
+					 synchronized (chunck_map){
+						 output.writeObject(chunck_map);
+						 output.flush();
+					 }
 					 
 					
 				} catch (IOException e) {
@@ -302,6 +304,8 @@ public class DataNode {
 			FileOutputStream out;
 			try {
 				File old = new File(nodeinfo.rootdirectory + "/" + checkpoint_file);
+				if (old.exists()){
+					
 				if (old.isFile()) {
 					old.renameTo(new File(nodeinfo.rootdirectory + "/" + checkpoint_file + ".old"));
 				}
@@ -311,6 +315,16 @@ public class DataNode {
 				synchronized(chunck_map){
 					output.writeObject(chunck_map);
 					output.flush();
+				}
+				}
+				else
+				{
+					out = new FileOutputStream(checkpoint_file);
+					ObjectOutputStream output = new ObjectOutputStream (out);
+					synchronized(chunck_map){
+						output.writeObject(chunck_map);
+						output.flush();
+				}
 				}
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block

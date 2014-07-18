@@ -53,6 +53,7 @@ public class NameNode {
 		File fXmlFile = new File(configure_file);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
+		//System.out.println("123");
 		try {
 			dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(fXmlFile);
@@ -65,20 +66,24 @@ public class NameNode {
 			nodeInfo = new NameNodeInfo();
 			nodeInfo.port = Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent());
 			nodeInfo.factor = Integer.parseInt( eElement.getElementsByTagName("replica_factor").item(0).getTextContent());
+//			System.out.println("123");
 			server = new ServerSocket (nodeInfo.port);
+			//System.out.println("123");
 			String hostname = server.getInetAddress().toString();
 			if (hostname.contains("0.0.0.0"))
 				nodeInfo.hostname = "127.0.0.1";
 			else nodeInfo.hostname = hostname;
-			
+			//System.out.println(hostname);
 			//read checkpoing 
 			
 			nList = doc.getElementsByTagName("dataNodeMap");
 			String nodemap_name =  nList.item(0).getTextContent();
-//			System.out.println("123");
+			System.out.println("123");
+			
 			File file = new File (nodemap_name);
 			if (file.exists()){
 				FileInputStream in = new FileInputStream(nodemap_name);
+				System.out.println("nodemap");
 				ObjectInputStream input= new ObjectInputStream ( in );
 				dataNodeMap = (ArrayList<DataNodeInfo> )input.readObject();
 			}
@@ -93,6 +98,7 @@ public class NameNode {
 			file = new File (filemap_name);
 			if (file.exists()){
 				FileInputStream in = new FileInputStream(filemap_name);
+				System.out.println("filemap");
 				ObjectInputStream input= new ObjectInputStream ( in );
 				filemap = (HashMap<String, DFSfile> )input.readObject();
 			}
@@ -106,7 +112,7 @@ public class NameNode {
 			file = new File(stroage_map_name);
 			if (file.exists()){
 				FileInputStream in = new FileInputStream(stroage_map_name);
-				//System.out.println("123");
+				System.out.println("storagemap");
 				ObjectInputStream input= new ObjectInputStream ( in );
 				StorageMap = ( HashMap<DataNodeInfo, Integer> )input.readObject();
 			}
@@ -136,7 +142,7 @@ public class NameNode {
 			
 			
 			// TODO Auto-generated catch block
-		//	e.printStackTrace();
+			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
