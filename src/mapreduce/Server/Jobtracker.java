@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 
 import MessageForMap.*;
 import mapreduce.Jobconfig;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -142,30 +143,18 @@ public class Jobtracker {
 					
 					
 				}
-				if (list.size() > 0 )
-				{
-					//unsigned tasks to other nodes
-					
-					for (TaskManager t : list)
-					{
-						String hostname = t.hostname;
-						for (Integer i : jobmanager.jobQueue.keySet())
-						{
-							Jobstatus job = jobmanager.jobQueue.get(i);
-							if (job.status != Status.Finished)
-							{
-								job.Tasklocations.get(t);
-								
-								
-							}
-						}
-						
-						
-						
-					}
-					
-					
-					
+				
+				/*
+				 * according to the list containing hostname
+				 * and set all process in the list as Runnable
+				 * (info in tasklocation)
+				 * */
+				
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}
