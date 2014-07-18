@@ -319,7 +319,8 @@ public class DataNode {
 				}
 				else
 				{
-					out = new FileOutputStream(checkpoint_file);
+					old.createNewFile();
+					out = new FileOutputStream(nodeinfo.rootdirectory + "/" + checkpoint_file);
 					ObjectOutputStream output = new ObjectOutputStream (out);
 					synchronized(chunck_map){
 						output.writeObject(chunck_map);
