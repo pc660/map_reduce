@@ -1,5 +1,6 @@
 package mapreduce.Server;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,9 +10,22 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.text.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import MessageForMap.*;
 import mapreduce.Jobconfig;
-
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 public class Jobtracker {
 
 //	Jobconfig config;
@@ -32,6 +46,54 @@ public class Jobtracker {
 	 * */
 	public Jobtracker ()
 	{
+	
+		File fXmlFile = new File("mapreduce.xml");
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder;
+		//System.out.println("123");
+		
+			try {
+				dBuilder = dbFactory.newDocumentBuilder();
+				org.w3c.dom.Document doc;
+				doc = dBuilder.parse(fXmlFile);
+				doc.getDocumentElement().normalize();
+				NodeList nList = doc.getElementsByTagName("master");
+				//System.out.println(nList.getLength());
+				
+				Node node = nList.item(0);
+				Element eElement = (Element) node;
+				//nodeInfo = new NameNodeInfo();
+			//	hostname = eElement.getElementsByTagName("masterhost").item(0).getTextContent();
+				receiver_port = Integer.parseInt(eElement.getElementsByTagName("receiver_port").item(0).getTextContent());
+				resource_port = Integer.parseInt(eElement.getElementsByTagName("resource_port").item(0).getTextContent());
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		jobmanager = new Jobmanager();
 		taskmanger = new HashMap<Integer, TaskManager>();
 		jobreceiver recever = new jobreceiver (receiver_port);
@@ -51,6 +113,61 @@ public class Jobtracker {
 			System.out.println(job.unassigned_reduce);
 			System.out.println("************");
 			
+		}
+	}
+	private class keepalive extends Thread
+	{
+		@Override
+		public void run()
+		{
+			while(true)
+			{
+				ArrayList<TaskManager> list = new ArrayList<TaskManager> ();
+				for (Integer i : taskmanger.keySet())
+				{
+					TaskManager task = taskmanger.get(i);
+					try {
+						Socket s = new Socket (task.hostname, task.port);
+						
+						s.close();			
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						list.add(task);
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+					}
+					
+					
+					
+				}
+				if (list.size() > 0 )
+				{
+					//unsigned tasks to other nodes
+					
+					for (TaskManager t : list)
+					{
+						String hostname = t.hostname;
+						for (Integer i : jobmanager.jobQueue.keySet())
+						{
+							Jobstatus job = jobmanager.jobQueue.get(i);
+							if (job.status != Status.Finished)
+							{
+								job.Tasklocations.get(t);
+								
+								
+							}
+						}
+						
+						
+						
+					}
+					
+					
+					
+				}
+			}
 		}
 	}
 	private class jobreceiver extends Thread
@@ -84,7 +201,7 @@ public class Jobtracker {
 						//System.out.println(m.config.filename);
 						jobmanager.add(  m.config);
 					}
-					
+					listAllJobs();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -114,6 +231,9 @@ public class Jobtracker {
 		{
 			HashMap<String, Taskstatus> map = msg.tasks;
 			
+			
+			
+			
 			for (String str : map.keySet() )
 			{
 				System.out.println(str);
@@ -135,7 +255,7 @@ public class Jobtracker {
 				{
 					if (job.reducestate.containsKey(str))
 					{
-						job.mapstate.put(str, map.get(str).state);
+						job.reducestate.put(str, map.get(str).state);
 					}
 					else 
 					{
@@ -159,6 +279,24 @@ public class Jobtracker {
 				}
 			}
 			
+		//	for (Integer i )
+			
+			for (Integer i : jobmanager.jobQueue.keySet())
+			{
+				Jobstatus job = jobmanager.jobQueue.get(i);
+				boolean judge = true;
+				for (String str : job.reducestate.keySet())
+				{
+					if (job.reducestate.get(str) != Status.Finished)
+						judge = false;
+				}
+				if (judge){
+					job.status = Status.Finished;
+					System.out.println("job " + i + " finished");
+					//jobmanager.jobQueue.remove(job);
+				}
+			}
+
 			
 			
 		}
@@ -186,12 +324,14 @@ public class Jobtracker {
 				if (task == null)
 				{
 					System.out.println("Job ID: " + job.job_id + "does not have available map");
-					task = jobmanager.assign_reduce(job);
+					task = jobmanager.assign_reduce(job, msg.hostname);
+					
 					if (task == null)
 					{
 						System.out.println("Job ID: " + job.job_id + "does not have available reduce");
 					}
 					else{
+						
 						list.add(task);
 						System.out.println( "Job"+ task.jobID + "reduce" + task.taskID );
 					}
@@ -206,6 +346,10 @@ public class Jobtracker {
 			return list;
 			
 			
+		}
+		public synchronized int generateSlaveId()
+		{
+			return taskmanger.size();
 		}
 		public void register (SlaveMessage msg)
 		{
@@ -234,7 +378,9 @@ public class Jobtracker {
 			task.root = msg.root;
 			task.map_slot = msg.map_slot;
 			task.reduce_slot = msg.reduce_slot;
-			task.slave_id = msg.slaveID;
+			
+			
+			task.slave_id = generateSlaveId();
 			taskmanger.put(msg.slaveID, task);
 			
 			

@@ -27,7 +27,23 @@ public class Jobstatus implements Serializable {
 	//ArrayList><
 	public HashMap<String, Status> reducestate;
 	public Jobconfig jobConfig;
+	public HashMap<String, String> Tasklocations;
 	
-	public HashMap<String, Class> jobio;
+	public Jobstatus ()
+	{
+		
+		Tasklocations = new HashMap<String, String> ();
+		reducestate = new HashMap<String, Status>();
+		reduceinput = new  HashMap<String, ArrayList<String > > ();
+		mapstate = new HashMap<String, Status>();
+		mapinput = new HashMap<String, ArrayList<Chunck> >();
+		
+		
+	}
+	
+	
+	//public HashMap<String, Class> jobio;
+	
+	
 	
 }

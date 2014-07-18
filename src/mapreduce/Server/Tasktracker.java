@@ -9,17 +9,70 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import ding.Mapper;
 import File_system.DistributedFileSystem;
 import MessageForMap.*;
 //import MessageForMap.SlaveMessage;
+import NameNode.NameNodeInfo;
 
 public class Tasktracker {
 	TaskManager manger; 
 	public int taskport  = 20001;
-	
+	public int hostport ;
+	public String hostname;
 	public Tasktracker ()
 	{
+		
+		File fXmlFile = new File("mapreduce.xml");
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder;
+		//System.out.println("123");
+		
+			try {
+				dBuilder = dbFactory.newDocumentBuilder();
+				Document doc;
+				doc = dBuilder.parse(fXmlFile);
+				doc.getDocumentElement().normalize();
+				NodeList nList = doc.getElementsByTagName("master");
+				//System.out.println(nList.getLength());
+				
+				Node node = nList.item(0);
+				Element eElement = (Element) node;
+				//nodeInfo = new NameNodeInfo();
+				hostname = eElement.getElementsByTagName("masterhost").item(0).getTextContent();
+				hostport = Integer.parseInt(eElement.getElementsByTagName("resource_port").item(0).getTextContent());
+				nList = doc.getElementsByTagName("task");
+				node = nList.item(0);
+				eElement = (Element) node;
+				taskport = Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent());
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+		
+		
+		
+		
+		
 		manger = new TaskManager(4);
 		sendBeat sendbeat = new sendBeat();
 		check check = new check();
@@ -71,6 +124,7 @@ public class Tasktracker {
 					}
 					else if (task.type.equals("reduce"))
 					{
+						System.out.println("*************");
 						manger.reduce_num--;
 						manger.reduce_slot++;
 						task.state = Status.Finished;
@@ -79,9 +133,13 @@ public class Tasktracker {
 						for (int j = 0; j< task.config.numOfRed;j++)
 						{
 							String filename = task.config.config.filename;
+							System.out.println("Try to delete " + filename + "_chunck" + j + "_" + task.taskId);
 							File file = new File (filename + "_chunck" + j + "_" + task.taskId);
-							if (file.exists())
+							if (file.exists()){
 								file.delete();
+								System.out.println("Successfully delete it");
+							}
+							
 							dfs.removeFile(filename + "_chunck" + j + "_" + task.taskId);
 							
 						}
@@ -193,13 +251,13 @@ public class Tasktracker {
 		{
 			while(true){
 			try {
-				Socket s = new Socket ("unix6.andrew.cmu.edu", 10002);
+				Socket s = new Socket (hostname, hostport);
 				ObjectOutputStream output = new ObjectOutputStream (s.getOutputStream());
 				SlaveMessage msg = new SlaveMessage();
 				msg.hostname = server.getLocalSocketAddress().toString();
 				if (msg.hostname.contains("0.0.0.0"))
 					msg.hostname = "127.0.0.1";
-				System.out.println(msg.hostname);
+				//System.out.println(msg.hostname);
 				msg.port = taskport;
 				msg.map_slot = manger.free_map_slots();
 				msg.reduce_slot = manger.free_reduce_slots();

@@ -42,7 +42,7 @@ public class Jobmanager {
 		
 		int id = genereateID();
 		status.job_id = id;
-		status.jobio = new HashMap<String, Class>();
+		//status.jobio = new HashMap<String, Class>();
 		status.status = Status.Runnable;
 		status.reduceinput = new HashMap<String,  ArrayList <String >   > ();
 		//get DFS
@@ -109,6 +109,7 @@ public class Jobmanager {
 				return job;
 		}
 		
+		//System.out.println("return job " + job.job_id);
 		return job;
 	}
 	public Taskconfig assign_map (String hostname, Jobstatus job)
@@ -147,6 +148,12 @@ public class Jobmanager {
 							task.numOfRed = job.reduce_num;
 							job.unassigned_map --;
 							job.mapstate.put(str, Status.Suspend);
+							String name = "job" + job.job_id + "_map" + task.taskID;
+							job.Tasklocations.put(hostname, name);
+							
+							
+							
+							
 							return task;
 						}
 						else
@@ -173,12 +180,14 @@ public class Jobmanager {
 		}
 		if(task != null){
 			job.mapstate.put(pos, Status.Suspend);
+			String name = "job" + job.job_id + "_map" + task.taskID;
+			job.Tasklocations.put(hostname, name);
 			job.unassigned_map --;
 		}
 		return task;
 	}
 	
-	public Taskconfig assign_reduce(Jobstatus job)
+	public Taskconfig assign_reduce(Jobstatus job, String hostname)
 	{
 		Taskconfig task = null;
 		if (job.unassigned_reduce == 0 )
@@ -205,6 +214,9 @@ public class Jobmanager {
 					task.inputfile = job.reduceinput;
 					job.unassigned_reduce --;
 					job.reducestate.put(str, Status.Suspend);
+					
+					String name = "job" + job.job_id + "_reduce" + task.taskID;
+					job.Tasklocations.put(hostname, name);
 					return task;
 					
 					
