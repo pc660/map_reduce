@@ -377,7 +377,7 @@ public class DataNode {
 					}
 					else if (m instanceof WriteMessage)
 					{
-						System.out.println("Debug: write message received");
+						//System.out.println("Debug: write message received");
 						write_handler handler = new write_handler (ss, (WriteMessage) m);
 						handler.start();
 					}
