@@ -51,7 +51,7 @@ public class TaskManager {
 		 id =  "job" + task.jobId + "_map" + task.taskId;
 		else if (task.type.equals("reduce"))
 			 id =  "job" + task.jobId + "_reduce" + task.taskId;
-		System.out.println(id);
+		//System.out.println(id);
 		tasks.put(id, task);
 	}
 	

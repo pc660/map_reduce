@@ -149,7 +149,15 @@ public class Jobtracker {
 				 * and set all process in the list as Runnable
 				 * (info in tasklocation)
 				 * */
-				
+				for (TaskManager task :list)
+				{
+					for (String s : task.tasks.keySet())
+					{
+						Taskstatus tmp = task.tasks.get(s);
+						tmp.state = Status.Runnable;
+						task.tasks.put(s, tmp);
+					}
+				}
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
