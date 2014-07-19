@@ -1,0 +1,4 @@
+<master>
+  <receiver_port> 10001 </receiver_port>
+  <resource_port> 10002 </resouce_port>>
+</master>
