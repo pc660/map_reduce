@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<configuration>
+<master>
+    <receiver_port>10001</receiver_port>
+    <resource_port>10002</resource_port>>
+    <masterhost>127.0.0.1</masterhost>
+</master>
+<task>
+    <port>20001</port>
+</task>
+</configuration>
+
