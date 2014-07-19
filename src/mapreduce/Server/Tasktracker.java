@@ -30,6 +30,17 @@ public class Tasktracker {
 	public int taskport  = 20001;
 	public int hostport ;
 	public String hostname;
+	public Tasktracker (int port)
+	{
+		this.hostname = "127.0.0.1";
+		hostport = 10002;
+		this.taskport = port;
+		manger = new TaskManager(4);
+		sendBeat sendbeat = new sendBeat();
+		check check = new check();
+		check.start();
+		sendbeat.start();
+	}
 	public Tasktracker ()
 	{
 		

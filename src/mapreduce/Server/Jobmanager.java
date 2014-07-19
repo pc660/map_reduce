@@ -37,6 +37,7 @@ public class Jobmanager {
 	//public void getAvailableTasks
 	public synchronized void add (Jobconfig config)
 	{
+		
 		String name = config.jobName;
 		Jobstatus status = new Jobstatus();
 		
@@ -52,11 +53,12 @@ public class Jobmanager {
 		status.mapinput = new HashMap<String, ArrayList<Chunck>  >();
 		status.reduceinput = new HashMap<String , ArrayList<String>> ();
 		//get map and reduce num
-		
+		//System.out.println("123");
 		DistributedFileSystem dfs = new DistributedFileSystem();
 		DFSfile file = dfs.getFile(config.filename);
+		//System.out.println("123");
 		status.map_num = file.chuncklist.size();
-		System.out.println("map num " + status.map_num);
+		//System.out.println("map num " + status.map_num);
 		status.unassigned_map = status.map_num;
 		//hard code
 		status.reduce_num = status.map_num;
@@ -67,7 +69,7 @@ public class Jobmanager {
 			String taskID = "job" + id + "_map" + i;
 			status.mapstate.put(taskID, Status.Runnable);
 			status.mapinput.put(taskID, file.chuncklist.get(i));
-			//System.out.println("task id " + taskID + " chunck  " + i);
+			System.out.println("task id " + taskID + " chunck  " + i);
 			
 			
 			for (int j = 0; j< status.reduce_num; j++)
@@ -93,6 +95,7 @@ public class Jobmanager {
 			String taskID = "job" + id + "_reduce" + i;
 			status.reducestate.put(taskID, Status.Runnable);	
 		}
+		//System.out.println("successfully put");
 		jobQueue.put(id, status);
 	
 		
@@ -103,13 +106,18 @@ public class Jobmanager {
 		for (Integer i :jobQueue.keySet())
 		{
 			job = jobQueue.get(i);
-			if (job.status == Status.Runnable )
+			if (job.status == Status.Runnable ){
+				System.out.println("return job " + job.job_id);
+				job.status = Status.Running;
 				return job;
-			else if (job.status == Status.Running &&  (job.unassigned_map >0|| job.unassigned_reduce>0) )
+			}
+			else if (job.status == Status.Running &&  (job.unassigned_map >0|| (job.map_finished ==true && job.unassigned_reduce>0)) ){
+				System.out.println("return job " + job.job_id);
 				return job;
+			}
 		}
 		
-		//System.out.println("return job " + job.job_id);
+		System.out.println("return job " + job.job_id);
 		return job;
 	}
 	public Taskconfig assign_map (String hostname, Jobstatus job)
@@ -135,7 +143,7 @@ public class Jobmanager {
 						//System.out.println("1234");
 						if(hostname.equals( tmp.nodeInfo.hostname) )
 						{
-							System.out.println("Find one task with same hostname");
+							//System.out.println("Find one task with same hostname");
 							task = new Taskconfig();
 							task.jobtype = "map";
 							task.jar = job.jobConfig.jar;
@@ -159,7 +167,7 @@ public class Jobmanager {
 						else
 						{
 							if (!judge){
-								System.out.println("Find one task with different hostname");
+								//System.out.println("Find one task with different hostname");
 								judge = true;
 								task = new Taskconfig();
 								task.jobtype = "map";
@@ -193,7 +201,7 @@ public class Jobmanager {
 		if (job.unassigned_reduce == 0 )
 			return null;
 	//	boolean judge = false;
-		if (job.status == Status.Runnable && job.map_finished == true)
+		if (job.status == Status.Running && job.map_finished == true)
 		{
 			for (String str : job.reducestate.keySet())
 			{
@@ -201,7 +209,7 @@ public class Jobmanager {
 				{
 					//ArrayList<Chunck> list = job.reducestate.get(str);
 					//HashMap<String, String> input = job.reduceinput;
-					System.out.println("Assign one reduce");
+					//System.out.println("Assign one reduce");
 					task = new Taskconfig();
 					task.jobtype = "reduce";
 					task.jar = job.jobConfig.jar;

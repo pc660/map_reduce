@@ -143,7 +143,7 @@ public class main {
 			config.reduceOutputValueClass = String.class;
 			//config.mapInputPath = "1";
 			//config.setJar("bin/example/wordcount.class");
-			config.filename = "0";
+			config.filename = args[1];
 			config.setJar("bin/example/wordcount.class");
 			config.classname = "example.wordcount";
 			//String s= "bin/example/wordcount.class";
@@ -156,7 +156,8 @@ public class main {
 		}
 		else if (args[0].equals("tasktracker"))
 		{
-			Tasktracker task = new Tasktracker();
+			int port = Integer.parseInt(args[1]);
+			Tasktracker task = new Tasktracker(port);
 			
 			
 			

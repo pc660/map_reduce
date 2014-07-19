@@ -11,7 +11,7 @@ public class JobClient {
 	public int jobtrackerport;
 	public JobClient ()
 	{
-		hostname = "unix1.andrew.cmu.edu";
+		hostname = "127.0.0.1";
 		jobtrackerport = 10001;
 		
 	}

@@ -33,7 +33,7 @@ public class Jobtracker {
 	public int receiver_port = 10001;
 	public int resource_port = 10002;
 	Jobmanager jobmanager ;
-	HashMap<Integer, TaskManager> taskmanger;
+	HashMap<String, TaskManager> taskmanger;
 	/*
 	 * 
 	 * */
@@ -96,7 +96,7 @@ public class Jobtracker {
 		
 		
 		jobmanager = new Jobmanager();
-		taskmanger = new HashMap<Integer, TaskManager>();
+		taskmanger = new HashMap<String, TaskManager>();
 		jobreceiver recever = new jobreceiver (receiver_port);
 		recever.start();
 		ResouceManager manager = new ResouceManager(resource_port);
@@ -124,7 +124,7 @@ public class Jobtracker {
 			while(true)
 			{
 				ArrayList<TaskManager> list = new ArrayList<TaskManager> ();
-				for (Integer i : taskmanger.keySet())
+				for (String i : taskmanger.keySet())
 				{
 					TaskManager task = taskmanger.get(i);
 					try {
@@ -195,9 +195,10 @@ public class Jobtracker {
 					if (msg instanceof JobMessage)
 					{
 						JobMessage m = (JobMessage) msg;
-						//System.out.println(m.config.filename);
+						System.out.println(m.config.filename);
 						jobmanager.add(  m.config);
 					}
+					//System.out.println("")
 					listAllJobs();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -233,7 +234,7 @@ public class Jobtracker {
 			
 			for (String str : map.keySet() )
 			{
-				System.out.println(str);
+				//System.out.println(str);
 				String [] args = str.split("_");
 				int id = Integer.parseInt(args[0].substring(3));
 				Jobstatus job = jobmanager.jobQueue.get(id);
@@ -289,7 +290,7 @@ public class Jobtracker {
 				}
 				if (judge){
 					job.status = Status.Finished;
-					System.out.println("job " + i + " finished");
+					//System.out.println("job " + i + " finished");
 					//jobmanager.jobQueue.remove(job);
 				}
 			}
@@ -310,7 +311,7 @@ public class Jobtracker {
 			for (int i = 0; i< msg.available_cpu; i++)
 			{
 				Jobstatus job = jobmanager.getFirstAvailableJob();
-				
+				//System.o
 				if (job == null)
 				{
 					System.out.println("No Available jobs now");
@@ -323,18 +324,20 @@ public class Jobtracker {
 					System.out.println("Job ID: " + job.job_id + "does not have available map");
 					task = jobmanager.assign_reduce(job, msg.hostname);
 					
+					
 					if (task == null)
 					{
+						System.out.println(job.map_finished);
 						System.out.println("Job ID: " + job.job_id + "does not have available reduce");
 					}
 					else{
 						
 						list.add(task);
-						System.out.println( "Job"+ task.jobID + "reduce" + task.taskID );
+						//System.out.println( "Job"+ task.jobID + "reduce" + task.taskID );
 					}
 					}
 				else{
-					System.out.println( "Job"+ task.jobID + "_map" + task.taskID );
+					//System.out.println( "Job"+ task.jobID + "_map" + task.taskID );
 					list.add(task);
 				}
 				
@@ -378,7 +381,8 @@ public class Jobtracker {
 			
 			
 			task.slave_id = generateSlaveId();
-			taskmanger.put(msg.slaveID, task);
+			String name = msg.hostname + ":" + msg.port;
+			taskmanger.put(name, task);
 			
 			
 		}
@@ -388,14 +392,15 @@ public class Jobtracker {
 			
 			
 			//updateJob
-			
-			if (taskmanger.containsKey(msg.slaveID) )
+			String name = msg.hostname + ":" + msg.port;
+			if (taskmanger.containsKey(name) )
 			{		
 				list = schedule (msg);
 				
 			}
 			else
 			{
+				System.out.println("Register one slave");
 				register(msg);
 				list = schedule(msg);
 			}
@@ -422,10 +427,15 @@ public class Jobtracker {
 						 * check slave info and assign tasks
 						 * 
 						 * */
+						
 						System.out.println("receive msg");
+						System.out.println(((SlaveMessage) msg).hostname + ":" +( (SlaveMessage)msg).port);
+						
 						Message m = handleMessage ((SlaveMessage)msg);
 						ObjectOutputStream output = new ObjectOutputStream (socket.getOutputStream());
 						output.writeObject(m);
+						System.out.println("****************");
+						
 						
 					}
 					
