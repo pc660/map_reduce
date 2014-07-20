@@ -290,7 +290,7 @@ public class Jobtracker {
 				}
 				if (judge){
 					job.status = Status.Finished;
-					//System.out.println("job " + i + " finished");
+					System.out.println("job " + i + " finished");
 					//jobmanager.jobQueue.remove(job);
 				}
 			}
