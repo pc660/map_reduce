@@ -33,8 +33,42 @@ public class Tasktracker {
 	public int maximum_time = 10 ;
 	public Tasktracker (int port)
 	{
-		this.hostname = "127.0.0.1";
-		hostport = 10002;
+		File fXmlFile = new File("mapreduce.xml");
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder;
+		//System.out.println("123");
+		
+			try {
+				dBuilder = dbFactory.newDocumentBuilder();
+				Document doc;
+				doc = dBuilder.parse(fXmlFile);
+				doc.getDocumentElement().normalize();
+				NodeList nList = doc.getElementsByTagName("master");
+				//System.out.println(nList.getLength());
+				
+				Node node = nList.item(0);
+				Element eElement = (Element) node;
+				//nodeInfo = new NameNodeInfo();
+				hostname = eElement.getElementsByTagName("masterhost").item(0).getTextContent();
+				hostport = Integer.parseInt(eElement.getElementsByTagName("resource_port").item(0).getTextContent());
+				nList = doc.getElementsByTagName("task");
+				node = nList.item(0);
+				eElement = (Element) node;
+				taskport = Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent());
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		//this.hostname = "127.0.0.1";
+		//hostport = 10002;
 		this.taskport = port;
 		manger = new TaskManager(4);
 		sendBeat sendbeat = new sendBeat();
