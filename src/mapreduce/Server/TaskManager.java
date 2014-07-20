@@ -63,7 +63,7 @@ public class TaskManager {
 		ArrayList<Taskstatus> list = new ArrayList<Taskstatus> ();
 		for (String str : tasks.keySet())
 		{
-			System.out.println("id: " + str);
+			//System.out.println("id: " + str);
 			Taskstatus task = tasks.get(str);
 			if ( slot > 0 && task.assign == false && task.state == Status.Runnable)
 			{
