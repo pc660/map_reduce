@@ -33,7 +33,7 @@ public class Tasktracker {
 	public int maximum_time = 10 ;
 	public Tasktracker (int port)
 	{
-		this.hostname = "127.0.0.1";
+		this.hostname = "unix6.andrew.cmu.edu";
 		hostport = 10002;
 		this.taskport = port;
 		manger = new TaskManager(4);
