@@ -216,8 +216,11 @@ public class Task {
 								}
 
 								// do the last key values
+								
 								if (list.size() > 0) {
+									System.out.println("do reduce" + taskStatus.jobId + "_reduce" + taskStatus.taskId);
 									reducer.reduce(key, list.iterator(), out);
+									System.out.println("finish reduce" + taskStatus.jobId + "_reduce" + taskStatus.taskId);
 								}
 
 							} catch (Exception e) {
@@ -229,7 +232,7 @@ public class Task {
 							}
 							
 							out.close();
-
+							//System.out.println("finish reduce" + taskStatus.jobId + "_reduce" + taskStatus.taskId);
 							//Upload results to DFS;
 							DistributedFileSystem dfs = new DistributedFileSystem();
 							System.out.println("**************upload" + resultFileName);
