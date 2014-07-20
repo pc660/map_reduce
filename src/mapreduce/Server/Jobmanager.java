@@ -56,6 +56,11 @@ public class Jobmanager {
 		//System.out.println("123");
 		DistributedFileSystem dfs = new DistributedFileSystem();
 		DFSfile file = dfs.getFile(config.filename);
+		if (file == null)
+		{
+			System.out.println("File does not exist");
+			return;
+		}
 		//System.out.println("123");
 		status.map_num = file.chuncklist.size();
 		//System.out.println("map num " + status.map_num);
