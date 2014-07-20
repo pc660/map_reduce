@@ -133,8 +133,11 @@ public class Jobmanager {
 		Taskconfig task = null;
 		String pos = null; 
 		boolean judge = false;
-		if (job.unassigned_map == 0 )
+		if (job.unassigned_map == 0 ){
+			System.out.println("no map available");
 			return null;
+			
+		}
 		else
 		{
 			for (String str : job.mapstate.keySet())
