@@ -78,12 +78,12 @@ public class NameNode {
 			
 			nList = doc.getElementsByTagName("dataNodeMap");
 			String nodemap_name =  nList.item(0).getTextContent();
-			System.out.println("123");
+			//System.out.println("123");
 			
 			File file = new File (nodemap_name);
 			if (file.exists()){
 				FileInputStream in = new FileInputStream(nodemap_name);
-				System.out.println("nodemap");
+			//	System.out.println("nodemap");
 				ObjectInputStream input= new ObjectInputStream ( in );
 				dataNodeMap = (ArrayList<DataNodeInfo> )input.readObject();
 			}
@@ -98,7 +98,7 @@ public class NameNode {
 			file = new File (filemap_name);
 			if (file.exists()){
 				FileInputStream in = new FileInputStream(filemap_name);
-				System.out.println("filemap");
+			//	System.out.println("filemap");
 				ObjectInputStream input= new ObjectInputStream ( in );
 				filemap = (HashMap<String, DFSfile> )input.readObject();
 			}
@@ -112,7 +112,7 @@ public class NameNode {
 			file = new File(stroage_map_name);
 			if (file.exists()){
 				FileInputStream in = new FileInputStream(stroage_map_name);
-				System.out.println("storagemap");
+				//System.out.println("storagemap");
 				ObjectInputStream input= new ObjectInputStream ( in );
 				StorageMap = ( HashMap<DataNodeInfo, Integer> )input.readObject();
 			}
@@ -123,7 +123,7 @@ public class NameNode {
 			}
 //			System.out.println("123");
 			//start service now
-			System.out.println("Finish  NameNode");
+		//	System.out.println("Finish  NameNode");
 			start_service();
 			//checkpoint check = new checkpoint();
 			//check.start();
@@ -203,10 +203,10 @@ public class NameNode {
 			{
 				try {
 					Socket socket = ss.accept();
-					System.out.println("Receive one message");
+				//	System.out.println("Receive one message");
 					ObjectInputStream input = new ObjectInputStream (socket.getInputStream());
 					Message m  = (Message) input.readObject();
-					System.out.println(m.getClass().toString());
+				//	System.out.println(m.getClass().toString());
 					if (m instanceof GetMessage)
 					{
 //						GetMessage 
@@ -347,7 +347,7 @@ public class NameNode {
 	{
 		if (!StorageMap.containsKey(info))
 		{
-			System.out.println(info.hostname);
+			//System.out.println(info.hostname);
 			dataNodeMap.add(info);
 			StorageMap.put(info, 0);
 		}
@@ -382,7 +382,7 @@ public class NameNode {
 				min = StorageMap.get(d);
 			}
 		}
-		System.out.println(tmp.read_port);
+		//System.out.println(tmp.read_port);
 		Chunck next_chunck = new Chunck (tmp);
 		int value = StorageMap.get(tmp);
 		StorageMap.put(tmp, ++value);
@@ -460,7 +460,7 @@ public class NameNode {
 					outObj.writeObject(StorageMap);	
 					outObj.flush();
 					outObj.close(); 
-					System.out.println("finish checkpoint");
+					//System.out.println("finish checkpoint");
 					Thread.sleep(1000);
 					
 				} catch (FileNotFoundException e) {
@@ -492,8 +492,8 @@ public class NameNode {
 			synchronized (dataNodeMap)
 			{
 				ArrayList<DataNodeInfo> list = new ArrayList<DataNodeInfo>();
-				System.out.println("Begin heart beat");
-				System.out.println(dataNodeMap.size());
+				//System.out.println("Begin heart beat");
+				//System.out.println(dataNodeMap.size());
 				for (DataNodeInfo d : dataNodeMap)
 				{
 					try {
@@ -525,7 +525,7 @@ public class NameNode {
 					} 
 					
 				}
-				System.out.println(list.size());
+				//System.out.println(list.size());
 				
 				for(DataNodeInfo d: list)
 				{	
@@ -564,8 +564,8 @@ public class NameNode {
 	private void updateFile (ArrayList<DataNodeInfo> list) throws UnknownHostException, IOException
 	{
 		//HashMap<DFSfile, ArrayList<Integer>> file_list = HashMap<DFSfile, Integer> ;
-		System.out.println("Before update");
-		for(String str :filemap.keySet())
+		//System.out.println("Before update");
+		/*for(String str :filemap.keySet())
 		{
 			DFSfile file = filemap.get(str);
 			int count = 0;
@@ -579,7 +579,7 @@ public class NameNode {
 				count ++ ;
 				System.out.println("");
 			}
-		}
+		}*/
 		
 		for (String str : filemap.keySet())
 		{
@@ -594,7 +594,7 @@ public class NameNode {
 						Chunck tmp = filemap.get(str).chuncklist.get(i).get(j);
 						if ( (tmp.nodeInfo.hostname == d.hostname)  && (tmp.nodeInfo.download_port == d.download_port) )
 						{
-							System.out.println("remove");
+						//	System.out.println("remove");
 							filemap.get(str).chuncklist.get(i).remove(j);
 						}
 					}
@@ -605,8 +605,8 @@ public class NameNode {
 			}	
 		}
 		
-		System.out.println("After update");
-		for(String str :filemap.keySet())
+		//System.out.println("After update");
+		/*for(String str :filemap.keySet())
 		{
 			DFSfile file = filemap.get(str);
 			int count = 0;
@@ -620,25 +620,25 @@ public class NameNode {
 				count ++ ;
 				System.out.println("");
 			}
-		}
+		}*/
 		
 		for (String str : filemap.keySet())
 		{
 			for (DataNodeInfo d :list)
 			{
 				ArrayList<Integer> chunck_list = filemap.get(str).nodemap.get(d);
-				System.out.println("Nodemap size:");System.out.println(chunck_list.size());
+				//System.out.println("Nodemap size:");System.out.println(chunck_list.size());
 				
 				for (int i : chunck_list)
 				{
-					System.out.println("id: " + i);
-					System.out.println("size: " + filemap.get(str).chuncklist.get(i).size());
+					//System.out.println("id: " + i);
+					//System.out.println("size: " + filemap.get(str).chuncklist.get(i).size());
 					
 					if ( filemap.get(str).chuncklist.get(i).size() > 0 && filemap.get(str).chuncklist.get(i).size()< nodeInfo.factor ){
 						Chunck tmp = filemap.get(str).chuncklist.get(i).get(0);
 						DataNodeInfo node = tmp.nodeInfo;
 						int iteration = nodeInfo.factor - filemap.get(str).chuncklist.get(i).size();
-						System.out.println(iteration);
+						//System.out.println(iteration);
 						ArrayList<DataNodeInfo> des = new ArrayList<DataNodeInfo>();
 						int start = 0;
 						while(des.size() < iteration && start < dataNodeMap.size())
@@ -649,8 +649,8 @@ public class NameNode {
 							}
 							start ++ ;
 						}
-						System.out.println(node.upload_port);
-						System.out.println(node.hostname);
+						//System.out.println(node.upload_port);
+						//System.out.println(node.hostname);
 						String name = str + "_chunck" + i;
 						DuplicateMessage msg = new DuplicateMessage (name, des);
 						Socket s = new Socket (node.hostname, node.upload_port);
