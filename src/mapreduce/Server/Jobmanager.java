@@ -147,6 +147,8 @@ public class Jobmanager {
 				{
 				//	System.out.println("123");
 					ArrayList<Chunck> list = job.mapinput.get(str);
+					System.out.println("input size" +  list.size());
+					
 					for (Chunck tmp : list)
 					{
 						//System.out.println("1234");
