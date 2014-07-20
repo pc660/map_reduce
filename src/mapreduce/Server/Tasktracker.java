@@ -30,6 +30,7 @@ public class Tasktracker {
 	public int taskport  = 20001;
 	public int hostport ;
 	public String hostname;
+	public int maximum_time = 10 ;
 	public Tasktracker (int port)
 	{
 		this.hostname = "127.0.0.1";
@@ -102,6 +103,7 @@ public class Tasktracker {
 	 * */
 	private class check extends Thread
 	{
+		
 		@Override
 		public void run(){
 			while(true)
@@ -117,12 +119,48 @@ public class Tasktracker {
 				}
 			}
 		}
+		@SuppressWarnings("deprecation")
 		public synchronized void removeSucceedTasks()
 		{
 			for(String i : manger.tasks.keySet())
 			{
 				
 				Taskstatus task = manger.tasks.get(i);
+				if (task.state == Status.Running)
+				{
+					task.running_time ++;
+					System.out.println(task.running_time);
+					if (task.running_time > maximum_time)
+					{
+						Task tmp = new Task ( task.config);
+						task.retry ++ ;
+						if (task.retry > 2)
+						{
+							task.t.stop();
+							task.state = Status.Fail;
+							continue;
+						}
+						try {
+							task.t.stop();
+							//System.out.println("Do mapper");
+							if (task.type.equals("map")){
+								Thread thread = tmp.do_mapper();
+								task.t = thread;
+								thread.start();
+							}
+							else if (task.type.equals("reduce"))
+							{
+								Thread thread = tmp.do_reducer();
+								task.t = thread;
+								thread.start();
+								task.running_time = 0;
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
 				if(task.state == Status.Succeed)
 				{
 				//	task.config.numOfRed
@@ -226,6 +264,7 @@ public class Tasktracker {
 					try {
 						System.out.println("Do mapper");
 						Thread thread = tmp.do_mapper();
+						t.t = thread;
 						thread.start();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -244,7 +283,9 @@ public class Tasktracker {
 					t.state = Status.Runnable;
 					Task tmp = new Task ( t);
 					System.out.println("Do reducer");
+					
 					Thread thread = tmp.do_reducer();
+					t.t = thread;
 					thread.start();
 					
 					//run task

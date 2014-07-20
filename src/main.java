@@ -126,9 +126,7 @@ public class main {
 		else if (args[0].equals("example.wordcount"))
 		{
 			Jobconfig config = new Jobconfig();
-			config.jobName = "wordcount";
-			
-			
+			config.jobName = "wordcount";	
 			config.mapInputKeyClass = String.class;
 			config.mapInputValueClass = String.class;
 			config.mapOutputKeyClass = String.class;
@@ -158,6 +156,35 @@ public class main {
 		{
 			int port = Integer.parseInt(args[1]);
 			Tasktracker task = new Tasktracker(port);
+		}
+		else if (args[0].equals("example.CountPuncation"))
+		{
+			Jobconfig config = new Jobconfig();
+			config.jobName = "wordcount";	
+			config.mapInputKeyClass = String.class;
+			config.mapInputValueClass = String.class;
+			config.mapOutputKeyClass = String.class;
+			config.mapOutputValueClass = String.class;
+			//wordcount t= new wordcount();
+			//config.jobClass = wordcount.class;
+			//config.mapClass = wordcount.Map.class;
+			//config.reduceClass = wordcount.reduce.class;
+			config.reduceInputKeyClass = String.class;
+			config.reduceInputValueClass = String.class;
+			config.reduceOutputKeyClass = String.class;
+			config.reduceOutputValueClass = String.class;
+			//config.mapInputPath = "1";
+			//config.setJar("bin/example/wordcount.class");
+			config.filename = args[1];
+			config.setJar("bin/example/CountPunctuation.class");
+			config.classname = "example.CountPunctuation";
+			//String s= "bin/example/wordcount.class";
+			
+			//System.out.println(s.substring(0, s.length() - 6));
+			JobClient client = new JobClient();
+			client.runJob(config);
+			
+			
 			
 			
 			

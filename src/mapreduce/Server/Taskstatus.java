@@ -16,4 +16,7 @@ public class Taskstatus implements Serializable{
 	
 	//newly add stuff
 	public boolean assign = false;
+	public int running_time = 0; 
+	public int retry = 0;
+	public transient Thread t ;
 }
