@@ -9,10 +9,11 @@ import MessageForMap.JobMessage;
 public class JobClient {
 	public String hostname; 
 	public int jobtrackerport;
-	public JobClient ()
+	
+	public JobClient (String hostname, int port)
 	{
-		hostname = "unix6.andrew.cmu.edu";
-		jobtrackerport = 10001;
+		this.hostname = hostname;
+		this.jobtrackerport = port;
 		
 	}
 	

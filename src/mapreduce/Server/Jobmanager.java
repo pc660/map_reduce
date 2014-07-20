@@ -114,6 +114,7 @@ public class Jobmanager {
 			if (job.status == Status.Runnable ){
 				System.out.println("return job " + job.job_id);
 				job.status = Status.Running;
+				
 				return job;
 			}
 			else if (job.status == Status.Running &&  (job.unassigned_map >0|| (job.map_finished ==true && job.unassigned_reduce>0)) ){
@@ -139,7 +140,7 @@ public class Jobmanager {
 			for (String str : job.mapstate.keySet())
 			{
 				//System.out.println("123");
-				if (job.mapstate.get(str) == Status.Running   )
+				if (job.mapstate.get(str) == Status.Runnable   )
 				{
 				//	System.out.println("123");
 					ArrayList<Chunck> list = job.mapinput.get(str);

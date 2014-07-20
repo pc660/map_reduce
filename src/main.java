@@ -147,7 +147,8 @@ public class main {
 			//String s= "bin/example/wordcount.class";
 			
 			//System.out.println(s.substring(0, s.length() - 6));
-			JobClient client = new JobClient();
+			int port = Integer.parseInt(args[3]);
+			JobClient client = new JobClient(args[2], port);
 			client.runJob(config);
 			
 
@@ -181,7 +182,8 @@ public class main {
 			//String s= "bin/example/wordcount.class";
 			
 			//System.out.println(s.substring(0, s.length() - 6));
-			JobClient client = new JobClient();
+			int port = Integer.parseInt(args[3]);
+			JobClient client = new JobClient(args[2], port);
 			client.runJob(config);
 			
 			

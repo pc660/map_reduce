@@ -33,7 +33,7 @@ public class Tasktracker {
 	public int maximum_time = 10 ;
 	public Tasktracker (int port)
 	{
-		this.hostname = "unix6.andrew.cmu.edu";
+		this.hostname = "127.0.0.1";
 		hostport = 10002;
 		this.taskport = port;
 		manger = new TaskManager(4);
@@ -176,7 +176,7 @@ public class Tasktracker {
 					}
 					else if (task.type.equals("reduce"))
 					{
-						System.out.println("*************");
+					//	System.out.println("*************");
 						manger.reduce_num--;
 						manger.reduce_slot++;
 						task.state = Status.Finished;
@@ -185,11 +185,11 @@ public class Tasktracker {
 						for (int j = 0; j< task.config.numOfRed;j++)
 						{
 							String filename = task.config.config.filename;
-							System.out.println("Try to delete " + filename + "_chunck" + j + "_" + task.taskId);
+							//System.out.println("Try to delete " + filename + "_chunck" + j + "_" + task.taskId);
 							File file = new File (filename + "_chunck" + j + "_" + task.taskId);
 							if (file.exists()){
 								file.delete();
-								System.out.println("Successfully delete it");
+							//	System.out.println("Successfully delete it");
 							}
 							
 							dfs.removeFile(filename + "_chunck" + j + "_" + task.taskId);
@@ -250,7 +250,7 @@ public class Tasktracker {
 		public  void schedule ()
 		{
 			ArrayList<Taskstatus> list = manger.getAvailableTasks();
-			System.out.println("list size in schedule" + list.size());
+			//System.out.println("list size in schedule" + list.size());
 			for (Taskstatus t : list)
 			{
 				if (t.type.equals("map"))
@@ -306,6 +306,7 @@ public class Tasktracker {
 		{
 			while(true){
 			try {
+				
 				Socket s = new Socket (hostname, hostport);
 				ObjectOutputStream output = new ObjectOutputStream (s.getOutputStream());
 				SlaveMessage msg = new SlaveMessage();
@@ -319,7 +320,7 @@ public class Tasktracker {
 				msg.CPU = manger.cpu_num;
 				msg.tasks = manger.tasks;
 				msg.available_cpu = manger.cpu_num - manger.map_num - manger.reduce_num;
-				System.out.println(msg.available_cpu);
+				//System.out.println(msg.available_cpu);
 				msg.tasks = manger.tasks;
 				output.writeObject(msg);
 				
@@ -332,13 +333,13 @@ public class Tasktracker {
 				
 				if ( m instanceof TaskCreateMessage)
 				{
-					System.out.println("receive task create message");
+					//System.out.println("receive task create message");
 					TaskCreateMessage task = (TaskCreateMessage) m;
-					System.out.println("task size " + task.task.size());
+					//System.out.println("task size " + task.task.size());
 					//System.out.println("task  " + task.task.size());
 					for (Taskconfig t : task.task)
 						{
-							System.out.println("task name " + t.jobtype + t.taskID);
+							//System.out.println("task name " + t.jobtype + t.taskID);
 							manger.add( t);
 						}
 					schedule();

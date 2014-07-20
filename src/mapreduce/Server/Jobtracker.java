@@ -419,6 +419,7 @@ public class Jobtracker {
 			{
 				try {
 					Socket socket = server.accept();
+					System.out.println(1);
 					ObjectInputStream input = new ObjectInputStream (socket.getInputStream());
 					Message msg = (Message) input.readObject();
 					if (msg instanceof SlaveMessage)
