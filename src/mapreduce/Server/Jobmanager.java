@@ -142,7 +142,7 @@ public class Jobmanager {
 		{
 			for (String str : job.mapstate.keySet())
 			{
-				//System.out.println("123");
+				System.out.println((job.mapstate.get(str).toString()));
 				if (job.mapstate.get(str) == Status.Runnable   )
 				{
 				//	System.out.println("123");
@@ -152,7 +152,7 @@ public class Jobmanager {
 						//System.out.println("1234");
 						if(hostname.equals( tmp.nodeInfo.hostname) )
 						{
-							//System.out.println("Find one task with same hostname");
+							System.out.println("Find one task with same hostname");
 							task = new Taskconfig();
 							task.jobtype = "map";
 							task.jar = job.jobConfig.jar;
@@ -176,7 +176,7 @@ public class Jobmanager {
 						else
 						{
 							if (!judge){
-								//System.out.println("Find one task with different hostname");
+								System.out.println("Find one task with different hostname");
 								judge = true;
 								task = new Taskconfig();
 								task.jobtype = "map";
