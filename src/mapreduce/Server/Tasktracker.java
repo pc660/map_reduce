@@ -132,21 +132,24 @@ public class Tasktracker {
 					System.out.println(task.running_time);
 					if (task.running_time > maximum_time)
 					{
+						
+						
 						Task tmp = new Task ( task.config);
 						task.retry ++ ;
 						if (task.retry > 2)
 						{
-							task.t.stop();
+							task.t.destroy();
 							task.state = Status.Fail;
 							continue;
 						}
 						try {
-							task.t.stop();
+							task.t.destroy();
 							//System.out.println("Do mapper");
 							if (task.type.equals("map")){
 								Thread thread = tmp.do_mapper();
 								task.t = thread;
 								thread.start();
+								task.running_time = 0;
 							}
 							else if (task.type.equals("reduce"))
 							{
