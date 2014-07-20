@@ -39,8 +39,8 @@ public class Jobconfig implements Serializable {
 	        
 	        br = new FileInputStream(map_name);
 	        count = br.available();
-		       // System.out.println(count);
-		         // create buffer
+	        
+	        
 		     bs = new byte[count];
 		        br.read(bs);
 		        for(int i = 0; i< bs.length; i++)

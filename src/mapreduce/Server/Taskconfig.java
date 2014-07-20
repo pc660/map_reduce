@@ -46,8 +46,12 @@ public class Taskconfig implements Serializable{
 	
 		File f = new File (this.config.jarname);
 		
+		
+		
+		
 		try {
 			if (!f.exists())
+			{
 				f.createNewFile();
 			FileOutputStream output = new FileOutputStream(new File(this.config.jarname));
 			System.out.println(config.jar.size());
@@ -57,13 +61,14 @@ public class Taskconfig implements Serializable{
 				output.write(b);
 			}
 			output.close();
-			
+			}
 			
 		 f= new File(this.config.map_name);
 		
 			if (!f.exists())
+			{
 				f.createNewFile();
-			 output = new FileOutputStream(new File(this.config.map_name));
+				FileOutputStream output = new FileOutputStream(new File(this.config.map_name));
 			System.out.println(config.jar.size());
 			for (Byte b : config.map_data)
 			{
@@ -71,14 +76,14 @@ public class Taskconfig implements Serializable{
 				output.write(b);
 			}
 			output.close();
-
+			}
 
 			
 			 f= new File(this.config.reduce_name);
-		
+			 {
 				if (!f.exists())
 					f.createNewFile();
-				 output = new FileOutputStream(new File(this.config.reduce_name));
+				FileOutputStream output = new FileOutputStream(new File(this.config.reduce_name));
 				System.out.println(config.jar.size());
 				for (Byte b : config.reduce_data)
 				{
@@ -87,7 +92,7 @@ public class Taskconfig implements Serializable{
 				}
 				output.close();
 			
-			
+			 }
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
