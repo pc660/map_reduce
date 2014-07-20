@@ -139,7 +139,7 @@ public class Jobmanager {
 			for (String str : job.mapstate.keySet())
 			{
 				//System.out.println("123");
-				if (job.mapstate.get(str) == Status.Runnable   )
+				if (job.mapstate.get(str) == Status.Running   )
 				{
 				//	System.out.println("123");
 					ArrayList<Chunck> list = job.mapinput.get(str);
