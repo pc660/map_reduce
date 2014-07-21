@@ -147,16 +147,22 @@ public class main {
 			//String s= "bin/example/wordcount.class";
 			
 			//System.out.println(s.substring(0, s.length() - 6));
-			int port = Integer.parseInt(args[3]);
-			JobClient client = new JobClient(args[2], port);
+			//int port = Integer.parseInt(args[3]);
+			//JobClient client = new JobClient(args[2], port);
+			JobClient client = new JobClient();
 			client.runJob(config);
 			
 
 		}
 		else if (args[0].equals("tasktracker"))
 		{
+			if (args.length> 1){
 			int port = Integer.parseInt(args[1]);
 			Tasktracker task = new Tasktracker(port);
+			}
+			else{
+				Tasktracker task = new Tasktracker();
+			}
 		}
 		else if (args[0].equals("example.CountPuncation"))
 		{
@@ -182,8 +188,8 @@ public class main {
 			//String s= "bin/example/wordcount.class";
 			
 			//System.out.println(s.substring(0, s.length() - 6));
-			int port = Integer.parseInt(args[3]);
-			JobClient client = new JobClient(args[2], port);
+			//	int port = Integer.parseInt(args[3]);
+			JobClient client = new JobClient();
 			client.runJob(config);
 			
 			

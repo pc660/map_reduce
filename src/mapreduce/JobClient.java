@@ -20,12 +20,7 @@ public class JobClient {
 	public String hostname; 
 	public int jobtrackerport;
 	
-	public JobClient (String hostname, int port)
-	{
-		this.hostname = hostname;
-		this.jobtrackerport = port;
-		
-	}
+	
 	
 	public void runJob(Jobconfig config) throws IOException
 	{
@@ -36,10 +31,6 @@ public class JobClient {
 		/*
 		 * hard code here
 		 * */
-		JobMessage msg = new JobMessage();
-		msg.config = config;
-		System.out.println(config.filename);
-		Socket s = new Socket (hostname, jobtrackerport);
 		
 		File fXmlFile = new File("mapreduce.xml");
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -71,7 +62,11 @@ public class JobClient {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		
+			JobMessage msg = new JobMessage();
+			msg.config = config;
+			System.out.println(config.filename);
+			Socket s = new Socket (hostname, jobtrackerport);
+			
 		ObjectOutputStream output = new ObjectOutputStream (s.getOutputStream());
 		output.writeObject(msg);
 		

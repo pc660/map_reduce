@@ -103,6 +103,8 @@ public class Tasktracker {
 				node = nList.item(0);
 				eElement = (Element) node;
 				taskport = Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent());
+				System.out.println(taskport);
+				cpu_num = Integer.parseInt(eElement.getElementsByTagName("cpu").item(0).getTextContent());
 			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
