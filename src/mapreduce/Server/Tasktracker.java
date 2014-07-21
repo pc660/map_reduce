@@ -31,6 +31,7 @@ public class Tasktracker {
 	public int hostport ;
 	public String hostname;
 	public int maximum_time = 10 ;
+	public int cpu_num;
 	public Tasktracker (int port)
 	{
 		File fXmlFile = new File("mapreduce.xml");
@@ -55,6 +56,7 @@ public class Tasktracker {
 				node = nList.item(0);
 				eElement = (Element) node;
 				taskport = Integer.parseInt(eElement.getElementsByTagName("port").item(0).getTextContent());
+				cpu_num = Integer.parseInt(eElement.getElementsByTagName("cpu").item(0).getTextContent());
 			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -70,7 +72,7 @@ public class Tasktracker {
 		//this.hostname = "127.0.0.1";
 		//hostport = 10002;
 		this.taskport = port;
-		manger = new TaskManager(4);
+		manger = new TaskManager(this.cpu_num);
 		sendBeat sendbeat = new sendBeat();
 		check check = new check();
 		check.start();
@@ -119,7 +121,7 @@ public class Tasktracker {
 		
 		
 		
-		manger = new TaskManager(4);
+		manger = new TaskManager(this.cpu_num);
 		sendBeat sendbeat = new sendBeat();
 		check check = new check();
 		check.start();

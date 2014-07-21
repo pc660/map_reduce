@@ -7,6 +7,7 @@
 </master>
 <task>
     <port>20001</port>
+    <cpu>40</cpu>
 </task>
 </configuration>
 
