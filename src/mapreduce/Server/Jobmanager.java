@@ -126,6 +126,30 @@ public class Jobmanager {
 		System.out.println("return job " + job.job_id);
 		return job;
 	}
+	public void updateTask(String name)
+	{
+		String [] args = name.split("_");
+		int jobid = Integer.parseInt(args[0].substring(3));
+		System.out.println(jobid);
+		
+		if (args[1].contains("map"))
+		{
+			System.out.println(jobQueue.get(jobid).mapstate.get(name).toString());
+			
+			jobQueue.get(jobid).mapstate.put(name, Status.Runnable);
+			Jobstatus job = jobQueue.get(jobid);
+			job.unassigned_map ++;
+			System.out.println(name);
+		}
+		else if (args[1].contains("reduce"))
+		{
+			System.out.println(jobQueue.get(jobid).reducestate.get(name).toString());
+			Jobstatus job = jobQueue.get(jobid);
+			job.unassigned_reduce ++;
+			jobQueue.get(jobid).reducestate.put(name, Status.Runnable);
+			System.out.println(name);
+		}
+	}
 	public Taskconfig assign_map (String hostname, Jobstatus job)
 	{
 		//return a map with the corresponding hostname

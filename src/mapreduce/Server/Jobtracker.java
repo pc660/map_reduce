@@ -101,6 +101,8 @@ public class Jobtracker {
 		recever.start();
 		ResouceManager manager = new ResouceManager(resource_port);
 		manager.start();
+		keepalive keep = new keepalive();
+		keep.start();
 	}
 	public void listAllJobs()
 	{
@@ -149,15 +151,26 @@ public class Jobtracker {
 				 * and set all process in the list as Runnable
 				 * (info in tasklocation)
 				 * */
+				System.out.println("*****");
+				System.out.println("broken list size" + list.size());
+				System.out.println("*****");
 				for (TaskManager task :list)
 				{
+					System.out.println(task.port);
 					for (String s : task.tasks.keySet())
 					{
+						
 						Taskstatus tmp = task.tasks.get(s);
-						tmp.state = Status.Runnable;
-						task.tasks.put(s, tmp);
+						//tmp.state = Status.Runnable;
+						String name = "job" + tmp.jobId + "_" + tmp.type + tmp.taskId;
+						
+						jobmanager.updateTask(name);
 					}
+					
 				}
+				
+				for (TaskManager task :list)
+					taskmanger.remove(task);
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
@@ -343,6 +356,23 @@ public class Jobtracker {
 				
 			}
 			System.out.println("list size " + list.size());
+			
+			TaskManager t = taskmanger.get(msg.hostname + ":" + msg.port);
+			for (Taskconfig config : list )
+			{
+				//Taskstatus state = new Taskstatus ();
+				
+				Taskstatus task = new Taskstatus ();
+				task.jobId = config.jobID;
+				task.taskId = config.taskID;
+				task.state = Status.Runnable;
+				task.type = config.jobtype;
+				task.assign = false;
+				task.config = config;
+				String name = "job" + task.jobId + "_" + task.type + task.taskId;
+				t.tasks.put(name, task);
+			}
+			
 			return list;
 			
 			
